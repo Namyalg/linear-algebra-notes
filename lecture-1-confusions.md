@@ -265,6 +265,25 @@ c = 3.732/4 = 0.933. proj_v(u) = 0.933·(1,1.732) = (0.933, 1.616);
 w = (2,1) − (0.933,1.616) = (1.067, −0.616). Check: ⟨proj,w⟩ ≈ 0.996 − 0.995 ≈ 0 ✓
 (they're perpendicular); ‖proj‖² + ‖w‖² ≈ 3.48 + 1.52 ≈ 5.00 = ‖u‖² ✓ (Pythagoras).
 
+## Technique: the "drop the non-negative term" move
+**The template** (seen in Cauchy–Schwarz, the triangle inequality, and everywhere):
+write an exact identity, notice a term is ≥ 0, drop it, and get a ≥ bound.
+
+    a = b + c,   c ≥ 0   ⟹   a ≥ b
+
+**How it proves Cauchy–Schwarz (decomposition route):**
+- u = proj_v(u) + w with w ⟂ v; Pythagoras: ‖u‖² = ‖proj_v(u)‖² + ‖w‖².
+- ‖w‖² ≥ 0, so drop it: ‖u‖² ≥ ‖proj_v(u)‖² = |⟨u,v⟩|²/‖v‖².
+- Rearrange + sqrt → |⟨u,v⟩| ≤ ‖u‖‖v‖. Equality iff w = 0 (u ∥ v).
+
+**How it proves the triangle inequality:** the intermediate step 2Re⟨u,v⟩ ≤ 2‖u‖‖v‖
+is C–S, which itself came from a dropped ≥ 0 term.
+
+**The DNA of almost every inequality proof here:** either (a) drop a non-negative
+term, or (b) "some square is ≥ 0" (the quadratic route expands 0 ≤ ‖u−tv‖² and uses
+"discriminant ≤ 0 since a square ≥ 0"). When reading a proof, scan for which term is
+being dropped / which square is ≥ 0; that's the engine.
+
 ---
 
 ## Reference: Axler, "Linear Algebra Done Right" 4e, Ch. 6 (inner products)
