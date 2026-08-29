@@ -193,6 +193,31 @@ y-axis agrees by 1·√3 ≈ 1.73.
   L₁, L∞ have no inner product — their length data is incompatible with any pairwise
   alignment.
 
+**The closing statement (verbatim, as settled):** *The dot product and the norm answer
+different questions but carry the same information. The dot product asks "how similar are
+two vectors, summed over every axis" — decompose each into components, multiply
+axis-by-axis, add. Point it at the same vector and everything aligns, so you get the sum
+of its squared components; the norm is the square root of that — its size. The dot product
+is one inner product (the identity-weighting one, pairwise multiply); the norm is what
+that inner product induces when you feed a vector to itself.*
+
+**Properties of the inner product (Axler §6A) — the ones worth knowing:**
+- **Linearity in a slot = respects addition + scaling in that input position.** It's
+  *assumed* in the first slot (axioms 6.2): ⟨u+w, v⟩ = ⟨u,v⟩ + ⟨w,v⟩, and ⟨λu, v⟩ = λ⟨u,v⟩.
+- **What the second slot does is a theorem, and depends on the field (6.6d,e):** symmetry
+  / conjugate-symmetry makes the inner product linear in the *second* slot too —
+  ⟨u, v+w⟩ = ⟨u,v⟩ + ⟨u,w⟩ and ⟨u, λv⟩ = λ⟨u,v⟩ over ℝ, but over ℂ it's conjugate-linear:
+  ⟨u, λv⟩ = λ̄⟨u,v⟩. So: bilinear over ℝ, conjugate-linear in the second slot over ℂ.
+  This is the real-vs-complex difference, and why homogeneity is stated in the *first*
+  slot specifically.
+- **Why the norm comes out real even for complex λ (6.9):** ‖λv‖ = |λ|‖v‖ — the
+  absolute value (and the √⟨v,v⟩) is what keeps a length real.
+- **orthogonality & 0 (6.11):** 0 is orthogonal to everything; 0 is the *only* vector
+  orthogonal to itself.
+- **Next up (6.13):** the orthogonal decomposition u = (⟨u,v⟩/‖v‖²)v + w, w ⟂ v —
+  that's exactly the projection split our triangle-inequality proof was built from,
+  now formalized. This is the natural next topic.
+
 ---
 
 ## Reference: Axler, "Linear Algebra Done Right" 4e, Ch. 6 (inner products)
