@@ -214,6 +214,28 @@ of its squared components; the norm is the square root of that — its size. The
 is one inner product (the identity-weighting one, pairwise multiply); the norm is what
 that inner product induces when you feed a vector to itself.*
 
+## Topic: What makes an ``inner product space''
+**Gotcha:** "inner product space" = **a vector space PLUS an inner product on it**
+(Axler 6.4). The vector space supplies the set + addition + scalar multiplication; the
+inner product is *additional* structure layered on top — a function that takes an
+ordered pair of vectors to a scalar (Axler 6.2) and satisfies the 4 inner-product
+axioms: positivity, definiteness, additivity + homogeneity in the first slot, and
+conjugate symmetry. Both parts are required: an inner product without a vector space
+is meaningless (you must be able to add/scale its inputs), and a vector space without
+an inner product is just a vector space (no angles, no length).
+
+So the chain of "spaces," each adding structure:
+- **vector space** = set + addition + scalar mult (the 8 axioms)
+- **normed space** = vector space + a norm ‖·‖ (size)
+- **inner product space** = vector space + an inner product ⟨·,·⟩ (alignment), which
+  also induces a norm ‖v‖ = √⟨v,v⟩ — so every inner product space is automatically a
+  normed space.
+- **metric space** = set + a distance d(x,y) (needs no vector structure at all).
+
+Slight abuse of language to be aware of: when people say "V is an inner product
+space," the inner product is "lurking nearby or clear from context" — for "Fⁿ" it's
+the Euclidean inner product unless otherwise stated (Axler 6.4/6.5).
+
 ---
 
 ## Reference: Axler, "Linear Algebra Done Right" 4e, Ch. 6 (inner products)
