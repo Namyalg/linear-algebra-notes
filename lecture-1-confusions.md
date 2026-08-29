@@ -265,6 +265,28 @@ c = 3.732/4 = 0.933. proj_v(u) = 0.933·(1,1.732) = (0.933, 1.616);
 w = (2,1) − (0.933,1.616) = (1.067, −0.616). Check: ⟨proj,w⟩ ≈ 0.996 − 0.995 ≈ 0 ✓
 (they're perpendicular); ‖proj‖² + ‖w‖² ≈ 3.48 + 1.52 ≈ 5.00 = ‖u‖² ✓ (Pythagoras).
 
+## Topic: Basis & dimension (Lecture 2 §5.4)
+**Basis = the minimum set of vectors that span M** (no redundancy). "Minimum" =
+linearly independent = can't remove any vector and still span M. Either phrasing works:
+a basis is a spanning set with zero redundancy.
+
+**dim(M) = number of vectors in ANY basis of M = number of independent directions = m.**
+It's an exact *equality*, not a bound — once dim(M) = m, every basis has exactly m
+vectors, period. "Minimum" means smallest *size*, not "a specific set" — many different
+bases ({(1,0),(0,1)} vs {(0.6,0.8),(0.8,0.6)}) all have the same count m.
+
+**dim(Rⁿ) = n.** At most n independent directions (only n coordinate slots), and it's
+*achievable* (the canonical basis e₁..eₙ gives n independent directions that span
+everything). So every basis of Rⁿ has exactly n vectors.
+
+**Guard — a subspace's m directions do NOT have to align with m coordinate axes.** In
+Rⁿ's canonical basis one slot = one direction, but a general subspace weaves through
+coordinates: the tilted plane M = {x + y + z = 0} in R³ is 2-D with basis {(1,−1,0),
+(1,0,−1)} — two independent directions that cut diagonally across all three
+coordinates. So dim = m independent *directions*, not "m coordinate axes." The
+one-slot-one-direction picture is the clean special case (Rⁿ itself), not the general
+definition.
+
 ## Topic: Span (Lecture 2 §5.1)
 **Definition:** for X = {x₁,...,xₘ}, span(X) = the set of ALL linear combinations of X:
 
