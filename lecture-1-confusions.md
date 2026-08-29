@@ -144,6 +144,35 @@ y-axis agrees by 1·√3 ≈ 1.73.
 
 ---
 
+## Reference: Axler, "Linear Algebra Done Right" 4e, Ch. 6 (inner products)
+
+The canonical textbook treatment of everything in the norm / inner-product
+thread. Free online: https://linear.axler.net/LADR4e.pdf. Snapshot of §6A
+saved in `assets/axler-ladr-ch6-inner-products.txt`. Quick map:
+
+- **6.1 dot product** — x·y = Σxᵢyᵢ, and the design fact: x·x = ‖x‖².
+- **6.2 inner product axioms** — positivity, definiteness, additivity +
+  homogeneity in first slot, conjugate symmetry (complex case; over R it's
+  plain symmetry).
+- **6.3(b) weighted inner products** — c₁w₁z₁ + ... + cₙwₙzₙ with cᵢ > 0.
+  This is our made-up M norm, generalized — the book confirms it's legitimate.
+- **6.7 norm** — ‖v‖ = √⟨v,v⟩, *defined* not assumed.
+- **6.10 orthogonal** — ⟨u,v⟩ = 0.
+- **6.12 Pythagorean theorem** — u ⟂ v ⟹ ‖u+v‖² = ‖u‖² + ‖v‖².
+- **6.13 orthogonal decomposition** — u = (⟨u,v⟩/‖v‖²)v + w with w ⟂ v. This is
+  the projection split our triangle-inequality proof was built from.
+- **6.14 Cauchy–Schwarz** — |⟨u,v⟩| ≤ ‖u‖‖v‖; equality iff one is a scalar
+  multiple of the other. Axler's proof uses the orthogonal decomposition,
+  exactly the route our triangle-inequality doc takes.
+- **6.17 triangle inequality** — ‖u+v‖ ≤ ‖u‖+‖v‖; equality iff one of u,v is a
+  *nonnegative real* multiple of the other (the same fix Claude applied to our
+  triangle-inequality.tex: parallel alone is not enough, v = −u breaks it).
+- **6.21 parallelogram equality** — ‖u+v‖² + ‖u−v‖² = 2(‖u‖²+‖v‖²); one-line
+  proof via the inner product (cross terms cancel), which is why it's the test
+  separating inner-product norms from the rest.
+
+---
+
 ### 🔖 TO REVISIT LATER: norms derived from an inner product
 
 **Thread to come back to (concretely).** The made-up M norm ‖x‖_M = √(x₁² + 2x₂²) on R²

@@ -1,0 +1,763 @@
+
+========================================================================
+SOURCE: Sheldon Axler, "Linear Algebra Done Right", 4th edition (free
+online at linear.axler.net/LADR4e.pdf), Chapter 6 "Inner Product Spaces",
+Section 6A "Inner Products and Norms" (pages 181-191 of the book).
+Extracted text, extracted 2026-08-29.
+
+Everything in this repo's norm / inner-product thread maps to this
+section. Quick reference:
+  6.1 dot product              x·y = x1y1 + ... + xnyn, and x·x = ||x||^2
+  6.2 inner product (axioms)   positivity, definiteness, additivity +
+                               homogeneity in first slot, conjugate symmetry
+  6.3 (b) weighted inner products c1 w1 z1 + ... + cn wn zn  (the M norm!)
+  6.7 norm                     ||v|| = sqrt(<v,v>)  — defined, not assumed
+  6.10 orthogonal              <u,v> = 0
+  6.12 Pythagorean theorem     u ⟂ v  ⟹  ||u+v||^2 = ||u||^2 + ||v||^2
+  6.13 orthogonal decomposition u = (<u,v>/||v||^2) v + w, w ⟂ v  (projection)
+  6.14 Cauchy-Schwarz          |<u,v>| ≤ ||u|| ||v||
+  6.17 triangle inequality      ||u+v|| ≤ ||u||+||v|| (equality iff u,v are
+                               nonnegative real multiples)
+  6.21 parallelogram equality   ||u+v||^2 + ||u-v||^2 = 2(||u||^2 + ||v||^2)
+========================================================================
+
+Chapter 6
+
+Inner Product Spaces
+
+In making the definition of a vector space, we generalized the linear structure
+(addition and scalar multiplication) of 𝐑2 and 𝐑3. We ignored geometric features
+such as the notions of length and angle. These ideas are embedded in the concept
+of inner products, which we will investigate in this chapter.
+Every inner product induces a norm, which you can think of as a length.
+This norm satisfies key properties such as the Pythagorean theorem, the triangle
+inequality, the parallelogram equality, and the Cauchy–Schwarz inequality.
+The notion of perpendicular vectors in Euclidean geometry gets renamed to
+orthogonal vectors in the context of an inner product space. We will see that
+orthonormal bases are tremendously useful in inner product spaces. The Gram–
+Schmidt procedure constructs such bases. This chapter will conclude by putting
+together these tools to solve minimization problems.
+standing assumptions for this chapter
+• 𝐅 denotes 𝐑 or 𝐂 .
+• 𝑉 and 𝑊 denote vector spaces over 𝐅.
+
+Matthew Petroff CC BY-SA
+
+The George Peabody Library, now part of Johns Hopkins University, opened while
+James Sylvester (1814–1897) was the university’s first mathematics professor. Sylvester’s
+publications include the first use of the word matrix in mathematics.
+
+181
+
+Linear Algebra Done Right, fourth edition, by Sheldon Axler
+
+182
+
+Chapter 6
+
+Inner Product Spaces
+
+6A Inner Products and Norms
+Inner Products
+To motivate the concept of inner product,
+think of vectors in 𝐑2 and 𝐑3 as arrows
+with initial point at the origin. The length
+of a vector 𝑣 in 𝐑2 or 𝐑3 is called the
+norm of 𝑣 and is denoted by ‖𝑣‖. Thus
+for 𝑣 = (𝑎, 𝑏) ∈ 𝐑2, we have
+
+This vector 𝑣 has norm √𝑎2 + 𝑏2 .
+
+‖𝑣‖ = √𝑎2 + 𝑏2 .
+
+Similarly, if 𝑣 = (𝑎, 𝑏, 𝑐) ∈ 𝐑3, then ‖𝑣‖ = √𝑎2 + 𝑏2 + 𝑐2 .
+Even though we cannot draw pictures in higher dimensions, the generalization
+to 𝐑𝑛 is easy: we define the norm of 𝑥 = (𝑥1 , … , 𝑥𝑛 ) ∈ 𝐑𝑛 by
+‖𝑥‖ = √𝑥12 + ⋯ + 𝑥𝑛2 .
+
+The norm is not linear on 𝐑𝑛. To inject linearity into the discussion, we
+introduce the dot product.
+6.1 definition: dot product
+
+For 𝑥, 𝑦 ∈ 𝐑𝑛, the dot product of 𝑥 and 𝑦, denoted by 𝑥 ⋅ 𝑦, is defined by
+𝑥 ⋅ 𝑦 = 𝑥1 𝑦1 + ⋯ + 𝑥𝑛 𝑦𝑛 ,
+
+where 𝑥 = (𝑥1 , … , 𝑥𝑛 ) and 𝑦 = (𝑦1 , … , 𝑦𝑛 ).
+The dot product of two vectors in 𝐑𝑛
+is a number, not a vector. Notice that
+𝑥 ⋅ 𝑥 = ‖𝑥‖2 for all 𝑥 ∈ 𝐑𝑛. Furthermore,
+the dot product on 𝐑𝑛 has the following
+properties.
+
+If we think of a vector as a point instead
+of as an arrow, then ‖𝑥‖ should be
+interpreted to mean the distance from
+the origin to the point 𝑥.
+
+• 𝑥 ⋅ 𝑥 ≥ 0 for all 𝑥 ∈ 𝐑𝑛.
+• 𝑥 ⋅ 𝑥 = 0 if and only if 𝑥 = 0.
+• For 𝑦 ∈ 𝐑𝑛 fixed, the map from 𝐑𝑛 to 𝐑 that sends 𝑥 ∈ 𝐑𝑛 to 𝑥 ⋅ 𝑦 is linear.
+• 𝑥 ⋅ 𝑦 = 𝑦 ⋅ 𝑥 for all 𝑥, 𝑦 ∈ 𝐑𝑛.
+
+An inner product is a generalization of the dot product. At this point you may
+be tempted to guess that an inner product is defined by abstracting the properties
+of the dot product discussed in the last paragraph. For real vector spaces, that
+guess is correct. However, so that we can make a definition that will be useful
+for both real and complex vector spaces, we need to examine the complex case
+before making the definition.
+Linear Algebra Done Right, fourth edition, by Sheldon Axler
+
+Section 6A
+
+Inner Products and Norms
+
+183
+
+Recall that if 𝜆 = 𝑎 + 𝑏𝑖, where 𝑎, 𝑏 ∈ 𝐑 , then
+• the absolute value of 𝜆, denoted by |𝜆|, is defined by |𝜆| = √𝑎2 + 𝑏2 ;
+• the complex conjugate of 𝜆, denoted by 𝜆, is defined by 𝜆 = 𝑎 − 𝑏𝑖;
+• |𝜆|2 = 𝜆𝜆.
+
+See Chapter 4 for the definitions and the basic properties of the absolute value
+and complex conjugate.
+For 𝑧 = (𝑧1 , … , 𝑧𝑛 ) ∈ 𝐂𝑛, we define the norm of 𝑧 by
+‖𝑧‖ = √|𝑧1 |2 + ⋯ + |𝑧𝑛 |2 .
+
+The absolute values are needed because we want ‖𝑧‖ to be a nonnegative number.
+Note that
+‖𝑧‖2 = 𝑧1 𝑧1 + ⋯ + 𝑧𝑛 𝑧𝑛 .
+We want to think of ‖𝑧‖2 as the inner product of 𝑧 with itself, as we did
+in 𝐑𝑛. The equation above thus suggests that the inner product of the vector
+𝑤 = (𝑤1 , … , 𝑤𝑛 ) ∈ 𝐂𝑛 with 𝑧 should equal
+𝑤1 𝑧1 + ⋯ + 𝑤𝑛 𝑧𝑛 .
+
+If the roles of the 𝑤 and 𝑧 were interchanged, the expression above would be
+replaced with its complex conjugate. Thus we should expect that the inner product
+of 𝑤 with 𝑧 equals the complex conjugate of the inner product of 𝑧 with 𝑤. With
+that motivation, we are now ready to define an inner product on 𝑉, which may be
+a real or a complex vector space.
+One comment about the notation used in the next definition:
+• For 𝜆 ∈ 𝐂 , the notation 𝜆 ≥ 0 means 𝜆 is real and nonnegative.
+6.2 definition: inner product
+
+An inner product on 𝑉 is a function that takes each ordered pair (𝑢, 𝑣) of
+elements of 𝑉 to a number ⟨𝑢, 𝑣⟩ ∈ 𝐅 and has the following properties.
+positivity
+⟨𝑣, 𝑣⟩ ≥ 0 for all 𝑣 ∈ 𝑉.
+definiteness
+⟨𝑣, 𝑣⟩ = 0 if and only if 𝑣 = 0.
+additivity in first slot
+⟨𝑢 + 𝑣, 𝑤⟩ = ⟨𝑢, 𝑤⟩ + ⟨𝑣, 𝑤⟩ for all 𝑢, 𝑣, 𝑤 ∈ 𝑉.
+homogeneity in first slot
+⟨𝜆𝑢, 𝑣⟩ = 𝜆⟨𝑢, 𝑣⟩ for all 𝜆 ∈ 𝐅 and all 𝑢, 𝑣 ∈ 𝑉.
+conjugate symmetry
+⟨𝑢, 𝑣⟩ = ⟨𝑣, 𝑢⟩ for all 𝑢, 𝑣 ∈ 𝑉.
+Linear Algebra Done Right, fourth edition, by Sheldon Axler
+
+184
+
+Chapter 6
+
+Inner Product Spaces
+
+Every real number equals its complex
+conjugate. Thus if we are dealing with
+a real vector space, then in the last condition above we can dispense with the
+complex conjugate and simply state that
+⟨𝑢, 𝑣⟩ = ⟨𝑣, 𝑢⟩ for all 𝑢, 𝑣 ∈ 𝑉.
+
+Most mathematicians define inner
+products as above, but many physicists
+use a definition that requires homogeneity in the second slot instead of
+the first slot.
+
+6.3 example: inner products
+
+(a) The Euclidean inner product on 𝐅𝑛 is defined by
+⟨(𝑤1 , … , 𝑤𝑛 ), (𝑧1 , … , 𝑧𝑛 )⟩ = 𝑤1 𝑧1 + ⋯ + 𝑤𝑛 𝑧𝑛
+
+for all (𝑤1 , … , 𝑤𝑛 ), (𝑧1 , … , 𝑧𝑛 ) ∈ 𝐅𝑛.
+(b) If 𝑐1 , … , 𝑐𝑛 are positive numbers, then an inner product can be defined on 𝐅𝑛
+by
+⟨(𝑤1 , … , 𝑤𝑛 ), (𝑧1 , … , 𝑧𝑛 )⟩ = 𝑐1 𝑤1 𝑧1 + ⋯ + 𝑐𝑛 𝑤𝑛 𝑧𝑛
+for all (𝑤1 , … , 𝑤𝑛 ), (𝑧1 , … , 𝑧𝑛 ) ∈ 𝐅𝑛.
+(c) An inner product can be defined on the vector space of continuous real-valued
+functions on the interval [−1, 1] by
+1
+
+⟨ 𝑓 , 𝑔⟩ = ∫
+
+−1
+
+𝑓𝑔
+
+for all 𝑓 , 𝑔 continuous real-valued functions on [−1, 1].
+(d) An inner product can be defined on 𝒫(𝐑) by
+1
+
+⟨𝑝, 𝑞⟩ = 𝑝(0)𝑞(0) + ∫ 𝑝′ 𝑞′
+−1
+
+for all 𝑝, 𝑞 ∈ 𝒫(𝐑).
+(e) An inner product can be defined on 𝒫(𝐑) by
+∞
+
+⟨𝑝, 𝑞⟩ = ∫ 𝑝(𝑥)𝑞(𝑥)𝑒−𝑥 𝑑𝑥
+0
+
+for all 𝑝, 𝑞 ∈ 𝒫(𝐑).
+6.4 definition: inner product space
+
+An inner product space is a vector space 𝑉 along with an inner product on 𝑉.
+The most important example of an inner product space is 𝐅𝑛 with the Euclidean
+inner product given by (a) in the example above. When 𝐅𝑛 is referred to as an
+inner product space, you should assume that the inner product is the Euclidean
+inner product unless explicitly told otherwise.
+Linear Algebra Done Right, fourth edition, by Sheldon Axler
+
+Section 6A
+
+Inner Products and Norms
+
+185
+
+So that we do not have to keep repeating the hypothesis that 𝑉 and 𝑊 are
+inner product spaces, we make the following assumption.
+6.5 notation: 𝑉, 𝑊
+
+For the rest of this chapter and the next chapter, 𝑉 and 𝑊 denote inner product
+spaces over 𝐅.
+Note the slight abuse of language here. An inner product space is a vector
+space along with an inner product on that vector space. When we say that a vector
+space 𝑉 is an inner product space, we are also thinking that an inner product on
+𝑉 is lurking nearby or is clear from the context (or is the Euclidean inner product
+if the vector space is 𝐅𝑛 ).
+6.6
+
+basic properties of an inner product
+
+(a) For each fixed 𝑣 ∈ 𝑉, the function that takes 𝑢 ∈ 𝑉 to ⟨𝑢, 𝑣⟩ is a linear
+map from 𝑉 to 𝐅.
+(b) ⟨0, 𝑣⟩ = 0 for every 𝑣 ∈ 𝑉.
+(c) ⟨𝑣, 0⟩ = 0 for every 𝑣 ∈ 𝑉.
+(d) ⟨𝑢, 𝑣 + 𝑤⟩ = ⟨𝑢, 𝑣⟩ + ⟨𝑢, 𝑤⟩ for all 𝑢, 𝑣, 𝑤 ∈ 𝑉.
+(e) ⟨𝑢, 𝜆𝑣⟩ = 𝜆⟨𝑢, 𝑣⟩ for all 𝜆 ∈ 𝐅 and all 𝑢, 𝑣 ∈ 𝑉.
+Proof
+
+(a) For 𝑣 ∈ 𝑉, the linearity of 𝑢 ↦ ⟨𝑢, 𝑣⟩ follows from the conditions of additivity
+and homogeneity in the first slot in the definition of an inner product.
+(b) Every linear map takes 0 to 0. Thus (b) follows from (a).
+(c) If 𝑣 ∈ 𝑉, then the conjugate symmetry property in the definition of an inner
+product and (b) show that ⟨𝑣, 0⟩ = ⟨0, 𝑣⟩ = 0 = 0.
+(d) Suppose 𝑢, 𝑣, 𝑤 ∈ 𝑉. Then
+⟨𝑢, 𝑣 + 𝑤⟩ = ⟨𝑣 + 𝑤, 𝑢⟩
+= ⟨𝑣, 𝑢⟩ + ⟨𝑤, 𝑢⟩
+= ⟨𝑣, 𝑢⟩ + ⟨𝑤, 𝑢⟩
+= ⟨𝑢, 𝑣⟩ + ⟨𝑢, 𝑤⟩.
+
+(e) Suppose 𝜆 ∈ 𝐅 and 𝑢, 𝑣 ∈ 𝑉. Then
+⟨𝑢, 𝜆𝑣⟩ = ⟨𝜆𝑣, 𝑢⟩
+= 𝜆⟨𝑣, 𝑢⟩
+= 𝜆 ⟨𝑣, 𝑢⟩
+= 𝜆⟨𝑢, 𝑣⟩.
+Linear Algebra Done Right, fourth edition, by Sheldon Axler
+
+Chapter 6
+
+186
+
+Inner Product Spaces
+
+Norms
+Our motivation for defining inner products came initially from the norms of
+vectors on 𝐑2 and 𝐑3. Now we see that each inner product determines a norm.
+6.7 definition: norm, ‖𝑣‖
+
+For 𝑣 ∈ 𝑉, the norm of 𝑣, denoted by ‖𝑣‖, is defined by
+‖𝑣‖ = √⟨𝑣, 𝑣⟩.
+6.8 example: norms
+
+(a) If (𝑧1 , … , 𝑧𝑛 ) ∈ 𝐅𝑛 (with the Euclidean inner product), then
+‖(𝑧1 , … , 𝑧𝑛 )‖ = √|𝑧1 |2 + ⋯ + |𝑧𝑛 |2 .
+
+(b) For 𝑓 in the vector space of continuous real-valued functions on [−1, 1] and
+with inner product given as in 6.3(c), we have
+‖ 𝑓 ‖ = √∫
+
+1
+
+−1
+
+6.9
+
+𝑓 2.
+
+basic properties of the norm
+
+Suppose 𝑣 ∈ 𝑉.
+(a) ‖𝑣‖ = 0 if and only if 𝑣 = 0.
+(b) ‖𝜆𝑣‖ = |𝜆| ‖𝑣‖ for all 𝜆 ∈ 𝐅.
+Proof
+
+(a) The desired result holds because ⟨𝑣, 𝑣⟩ = 0 if and only if 𝑣 = 0.
+(b) Suppose 𝜆 ∈ 𝐅. Then
+‖𝜆𝑣‖2 = ⟨𝜆𝑣, 𝜆𝑣⟩
+= 𝜆⟨𝑣, 𝜆𝑣⟩
+= 𝜆𝜆⟨𝑣, 𝑣⟩
+= |𝜆|2 ‖𝑣‖2.
+
+Taking square roots now gives the desired equality.
+The proof of (b) in the result above illustrates a general principle: working
+with norms squared is usually easier than working directly with norms.
+Linear Algebra Done Right, fourth edition, by Sheldon Axler
+
+Section 6A
+
+Inner Products and Norms
+
+187
+
+Now we come to a crucial definition.
+6.10 definition: orthogonal
+
+Two vectors 𝑢, 𝑣 ∈ 𝑉 are called orthogonal if ⟨𝑢, 𝑣⟩ = 0.
+In the definition above, the order of The word orthogonal comes from the
+the two vectors does not matter, because Greek word orthogonios, which means
+⟨𝑢, 𝑣⟩ = 0 if and only if ⟨𝑣, 𝑢⟩ = 0. In- right-angled.
+stead of saying 𝑢 and 𝑣 are orthogonal,
+sometimes we say 𝑢 is orthogonal to 𝑣.
+Exercise 15 asks you to prove that if 𝑢, 𝑣 are nonzero vectors in 𝐑2, then
+⟨𝑢, 𝑣⟩ = ‖𝑢‖ ‖𝑣‖ cos 𝜃,
+
+where 𝜃 is the angle between 𝑢 and 𝑣 (thinking of 𝑢 and 𝑣 as arrows with initial
+point at the origin). Thus two nonzero vectors in 𝐑2 are orthogonal (with respect
+to the Euclidean inner product) if and only if the cosine of the angle between
+them is 0, which happens if and only if the vectors are perpendicular in the usual
+sense of plane geometry. Thus you can think of the word orthogonal as a fancy
+word meaning perpendicular.
+We begin our study of orthogonality with an easy result.
+6.11
+
+orthogonality and 0
+
+(a) 0 is orthogonal to every vector in 𝑉.
+(b) 0 is the only vector in 𝑉 that is orthogonal to itself.
+Proof
+
+(a) Recall that 6.6(b) states that ⟨0, 𝑣⟩ = 0 for every 𝑣 ∈ 𝑉.
+(b) If 𝑣 ∈ 𝑉 and ⟨𝑣, 𝑣⟩ = 0, then 𝑣 = 0 (by definition of inner product).
+For the special case 𝑉 = 𝐑2, the next theorem was known over 3,500 years ago
+in Babylonia and then rediscovered and proved over 2,500 years ago in Greece.
+Of course, the proof below is not the original proof.
+6.12
+
+Pythagorean theorem
+
+Suppose 𝑢, 𝑣 ∈ 𝑉. If 𝑢 and 𝑣 are orthogonal, then
+‖𝑢 + 𝑣‖2 = ‖𝑢‖2 + ‖𝑣‖2.
+Proof
+
+Suppose ⟨𝑢, 𝑣⟩ = 0. Then
+‖𝑢 + 𝑣‖2 = ⟨𝑢 + 𝑣, 𝑢 + 𝑣⟩
+= ⟨𝑢, 𝑢⟩ + ⟨𝑢, 𝑣⟩ + ⟨𝑣, 𝑢⟩ + ⟨𝑣, 𝑣⟩
+= ‖𝑢‖2 + ‖𝑣‖2.
+Linear Algebra Done Right, fourth edition, by Sheldon Axler
+
+188
+
+Chapter 6
+
+Inner Product Spaces
+
+Suppose 𝑢, 𝑣 ∈ 𝑉, with 𝑣 ≠ 0. We would like to write 𝑢 as a scalar multiple
+of 𝑣 plus a vector 𝑤 orthogonal to 𝑣, as suggested in the picture here.
+
+An orthogonal decomposition:
+
+𝑢 expressed as a scalar multiple of 𝑣 plus a vector orthogonal to 𝑣.
+
+To discover how to write 𝑢 as a scalar multiple of 𝑣 plus a vector orthogonal
+to 𝑣, let 𝑐 ∈ 𝐅 denote a scalar. Then
+𝑢 = 𝑐𝑣 + (𝑢 − 𝑐𝑣).
+
+Thus we need to choose 𝑐 so that 𝑣 is orthogonal to (𝑢 − 𝑐𝑣). Hence we want
+0 = ⟨𝑢 − 𝑐𝑣, 𝑣⟩ = ⟨𝑢, 𝑣⟩ − 𝑐‖𝑣‖2.
+
+The equation above shows that we should choose 𝑐 to be ⟨𝑢, 𝑣⟩/‖𝑣‖2. Making this
+choice of 𝑐, we can write
+𝑢=
+
+⟨𝑢, 𝑣⟩
+⟨𝑢, 𝑣⟩
+𝑣 + (𝑢 −
+𝑣).
+2
+‖𝑣‖
+‖𝑣‖2
+
+As you should verify, the equation displayed above explicitly writes 𝑢 as a scalar
+multiple of 𝑣 plus a vector orthogonal to 𝑣. Thus we have proved the following
+key result.
+6.13
+
+an orthogonal decomposition
+
+Suppose 𝑢, 𝑣 ∈ 𝑉, with 𝑣 ≠ 0. Set 𝑐 =
+𝑢 = 𝑐𝑣 + 𝑤
+
+⟨𝑢, 𝑣⟩
+⟨𝑢, 𝑣⟩
+and 𝑤 = 𝑢 −
+𝑣. Then
+‖𝑣‖2
+‖𝑣‖2
+
+and ⟨𝑤, 𝑣⟩ = 0.
+
+The orthogonal decomposition 6.13 will be used in the proof of the Cauchy–
+Schwarz inequality, which is our next result and is one of the most important
+inequalities in mathematics.
+Linear Algebra Done Right, fourth edition, by Sheldon Axler
+
+Section 6A
+6.14
+
+Inner Products and Norms
+
+189
+
+Cauchy–Schwarz inequality
+
+Suppose 𝑢, 𝑣 ∈ 𝑉. Then
+|⟨𝑢, 𝑣⟩| ≤ ‖𝑢‖ ‖𝑣‖.
+
+This inequality is an equality if and only if one of 𝑢, 𝑣 is a scalar multiple of
+the other.
+If 𝑣 = 0, then both sides of the desired inequality equal 0. Thus we can
+assume that 𝑣 ≠ 0. Consider the orthogonal decomposition
+Proof
+
+⟨𝑢, 𝑣⟩
+𝑣+𝑤
+‖𝑣‖2
+
+𝑢=
+
+given by 6.13, where 𝑤 is orthogonal to 𝑣. By the Pythagorean theorem,
+‖𝑢‖2 = ∥
+
+⟨𝑢, 𝑣⟩ 2
+𝑣∥ + ‖𝑤‖2
+‖𝑣‖2
+2
+
+=
+
+∣⟨𝑢, 𝑣⟩∣
++ ‖𝑤‖2
+‖𝑣‖2
+
+≥
+
+∣⟨𝑢, 𝑣⟩∣
+.
+‖𝑣‖2
+
+2
+
+6.15
+
+Multiplying both sides of this inequality by ‖𝑣‖2 and then taking square roots
+gives the desired inequality.
+The proof in the paragraph above Augustin-Louis Cauchy (1789–1857)
+shows that the Cauchy–Schwarz inequal- proved 6.16(a) in 1821. In 1859,
+ity is an equality if and only if 6.15 is Cauchy’s student Viktor Bunyakovsky
+an equality. This happens if and only (1804–1889) proved integral inequalif 𝑤 = 0. But 𝑤 = 0 if and only if 𝑢 ities like the one in 6.16(b). A few
+is a multiple of 𝑣 (see 6.13). Thus the decades later, similar discoveries by
+Cauchy–Schwarz inequality is an equal- Hermann Schwarz (1843–1921) atity if and only if 𝑢 is a scalar multiple of 𝑣 tracted more attention and led to the
+or 𝑣 is a scalar multiple of 𝑢 (or both; the name of this inequality.
+phrasing has been chosen to cover cases
+in which either 𝑢 or 𝑣 equals 0).
+6.16 example: Cauchy–Schwarz inequality
+
+(a) If 𝑥1 , … , 𝑥𝑛 , 𝑦1 , … , 𝑦𝑛 ∈ 𝐑 , then
+(𝑥1 𝑦1 + ⋯ + 𝑥𝑛 𝑦𝑛 )2 ≤ (𝑥12 + ⋯ + 𝑥𝑛2 )(𝑦12 + ⋯ + 𝑦𝑛2 ),
+
+as follows from applying the Cauchy–Schwarz inequality to the vectors
+
+(𝑥1 , … , 𝑥𝑛 ), (𝑦1 , … , 𝑦𝑛 ) ∈ 𝐑𝑛, using the usual Euclidean inner product.
+Linear Algebra Done Right, fourth edition, by Sheldon Axler
+
+Chapter 6
+
+190
+
+Inner Product Spaces
+
+(b) If 𝑓 , 𝑔 are continuous real-valued functions on [−1, 1], then
+∣∫
+
+1
+
+2
+
+−1
+
+𝑓 𝑔 ∣ ≤ (∫
+
+1
+
+−1
+
+1
+
+𝑓 2 )(∫ 𝑔2 ),
+−1
+
+as follows from applying the Cauchy–Schwarz inequality to Example 6.3(c).
+The next result, called the triangle inequality,
+has the geometric interpretation that the length
+of each side of a triangle is less than the sum of
+the lengths of the other two sides.
+Note that the triangle inequality implies that
+the shortest polygonal path between two points is
+a single line segment (a polygonal path consists
+of line segments).
+6.17
+
+In this triangle, the length of
+𝑢 + 𝑣 is less than the length
+of 𝑢 plus the length of 𝑣.
+
+triangle inequality
+
+Suppose 𝑢, 𝑣 ∈ 𝑉. Then
+‖𝑢 + 𝑣‖ ≤ ‖𝑢‖ + ‖𝑣‖.
+
+This inequality is an equality if and only if one of 𝑢, 𝑣 is a nonnegative real
+multiple of the other.
+Proof
+
+We have
+‖𝑢 + 𝑣‖2 = ⟨𝑢 + 𝑣, 𝑢 + 𝑣⟩
+= ⟨𝑢, 𝑢⟩ + ⟨𝑣, 𝑣⟩ + ⟨𝑢, 𝑣⟩ + ⟨𝑣, 𝑢⟩
+= ⟨𝑢, 𝑢⟩ + ⟨𝑣, 𝑣⟩ + ⟨𝑢, 𝑣⟩ + ⟨𝑢, 𝑣⟩
+= ‖𝑢‖2 + ‖𝑣‖2 + 2 Re⟨𝑢, 𝑣⟩
+
+6.18
+
+≤ ‖𝑢‖2 + ‖𝑣‖2 + 2∣⟨𝑢, 𝑣⟩∣
+
+6.19
+
+≤ ‖𝑢‖2 + ‖𝑣‖2 + 2‖𝑢‖ ‖𝑣‖
+2
+
+= (‖𝑢‖ + ‖𝑣‖) ,
+
+where 6.19 follows from the Cauchy–Schwarz inequality (6.14). Taking square
+roots of both sides of the inequality above gives the desired inequality.
+The proof above shows that the triangle inequality is an equality if and only if
+we have equality in 6.18 and 6.19. Thus we have equality in the triangle inequality
+if and only if
+6.20
+
+⟨𝑢, 𝑣⟩ = ‖𝑢‖ ‖𝑣‖.
+
+If one of 𝑢, 𝑣 is a nonnegative real multiple of the other, then 6.20 holds. Conversely, suppose 6.20 holds. Then the condition for equality in the Cauchy–
+Schwarz inequality (6.14) implies that one of 𝑢, 𝑣 is a scalar multiple of the other.
+This scalar must be a nonnegative real number, by 6.20, completing the proof.
+For the reverse triangle inequality, see Exercise 20.
+Linear Algebra Done Right, fourth edition, by Sheldon Axler
+
+Section 6A
+
+The next result is called the parallelogram equality because of its geometric
+interpretation: in every parallelogram, the
+sum of the squares of the lengths of the
+diagonals equals the sum of the squares of
+the lengths of the four sides. Note that the
+proof here is more straightforward than
+the usual proof in Euclidean geometry.
+6.21
+
+Inner Products and Norms
+
+191
+
+The diagonals of this parallelogram
+are 𝑢 + 𝑣 and 𝑢 − 𝑣.
+
+parallelogram equality
+
+Suppose 𝑢, 𝑣 ∈ 𝑉. Then
+‖𝑢 + 𝑣‖2 + ‖𝑢 − 𝑣‖2 = 2(‖𝑢‖2 + ‖𝑣‖2 ).
+Proof
+
+We have
+‖𝑢 + 𝑣‖2 + ‖𝑢 − 𝑣‖2 = ⟨𝑢 + 𝑣, 𝑢 + 𝑣⟩ + ⟨𝑢 − 𝑣, 𝑢 − 𝑣⟩
+= ‖𝑢‖2 + ‖𝑣‖2 + ⟨𝑢, 𝑣⟩ + ⟨𝑣, 𝑢⟩
+
++ ‖𝑢‖2 + ‖𝑣‖2 − ⟨𝑢, 𝑣⟩ − ⟨𝑣, 𝑢⟩
+= 2(‖𝑢‖2 + ‖𝑣‖2 ),
+
+as desired.
+
+Exercises 6A
+1
+
+Prove or give a counterexample: If 𝑣1 , … , 𝑣𝑚 ∈ 𝑉, then
+𝑚
+
+𝑚
+
+∑ ∑ ⟨𝑣𝑗 , 𝑣𝑘 ⟩ ≥ 0.
+𝑗 = 1 𝑘=1
+
+2
+
+Suppose 𝑆 ∈ ℒ(𝑉). Define ⟨⋅, ⋅⟩1 by
+⟨𝑢, 𝑣⟩1 = ⟨𝑆𝑢, 𝑆𝑣⟩
+
+for all 𝑢, 𝑣 ∈ 𝑉. Show that ⟨⋅, ⋅⟩1 is an inner product on 𝑉 if and only if 𝑆 is
+injective.
+3
+
+(a) Show that the function taking an ordered pair ((𝑥1 , 𝑥2 ), (𝑦1 , 𝑦2 )) of
+elements of 𝐑2 to |𝑥1 𝑦1 | + |𝑥2 𝑦2 | is not an inner product on 𝐑2.
+(b) Show that the function taking an ordered pair ((𝑥1 , 𝑥2 , 𝑥3 ), (𝑦1 , 𝑦2 , 𝑦3 ))
+of elements of 𝐑3 to 𝑥1 𝑦1 + 𝑥3 𝑦3 is not an inner product on 𝐑3.
+
+4
+
+Suppose 𝑇 ∈ ℒ(𝑉) is such that ‖𝑇𝑣‖ ≤ ‖𝑣‖ for every 𝑣 ∈ 𝑉. Prove that
+𝑇 − √2 𝐼 is injective.
+Linear Algebra Done Right, fourth edition, by Sheldon Axler
+
+192
+
+5
+
+Chapter 6
+
+Inner Product Spaces
+
+Suppose 𝑉 is a real inner product space.
+(a) Show that ⟨𝑢 + 𝑣, 𝑢 − 𝑣⟩ = ‖𝑢‖2 − ‖𝑣‖2 for every 𝑢, 𝑣 ∈ 𝑉.
+(b) Show that if 𝑢, 𝑣 ∈ 𝑉 have the same norm, then 𝑢 + 𝑣 is orthogonal to
+𝑢 − 𝑣.
+(c) Use (b) to show that the diagonals of a rhombus are perpendicular to
+each other.
+
+6
+
+Suppose 𝑢, 𝑣 ∈ 𝑉. Prove that ⟨𝑢, 𝑣⟩ = 0 ⟺ ‖𝑢‖ ≤ ‖𝑢 + 𝑎𝑣‖ for all 𝑎 ∈ 𝐅.
+
+7
+
+Suppose 𝑢, 𝑣 ∈ 𝑉. Prove that ‖𝑎𝑢 + 𝑏𝑣‖ = ‖𝑏𝑢 + 𝑎𝑣‖ for all 𝑎, 𝑏 ∈ 𝐑 if and
+only if ‖𝑢‖ = ‖𝑣‖.
+
+8
+
+Suppose 𝑎, 𝑏, 𝑐, 𝑥, 𝑦 ∈ 𝐑 and 𝑎2 + 𝑏2 + 𝑐2 + 𝑥2 + 𝑦2 ≤ 1. Prove that
+𝑎 + 𝑏 + 𝑐 + 4𝑥 + 9𝑦 ≤ 10.
+
+9
+
+Suppose 𝑢, 𝑣 ∈ 𝑉 and ‖𝑢‖ = ‖𝑣‖ = 1 and ⟨𝑢, 𝑣⟩ = 1. Prove that 𝑢 = 𝑣.
+
+10
+
+Suppose 𝑢, 𝑣 ∈ 𝑉 and ‖𝑢‖ ≤ 1 and ‖𝑣‖ ≤ 1. Prove that
+√1 − ‖𝑢‖2 √1 − ‖𝑣‖2 ≤ 1 − ∣⟨𝑢, 𝑣⟩∣.
+
+11
+
+Find vectors 𝑢, 𝑣 ∈ 𝐑2 such that 𝑢 is a scalar multiple of (1, 3), 𝑣 is orthogonal to (1, 3), and (1, 2) = 𝑢 + 𝑣.
+
+12
+
+Suppose 𝑎, 𝑏, 𝑐, 𝑑 are positive numbers.
+1 1 1 1
+(a) Prove that (𝑎 + 𝑏 + 𝑐 + 𝑑)( + + + ) ≥ 16.
+𝑎 𝑏 𝑐 𝑑
+(b) For which positive numbers 𝑎, 𝑏, 𝑐, 𝑑 is the inequality above an equality?
+
+13
+
+Show that the square of an average is less than or equal to the average of the
+squares. More precisely, show that if 𝑎1 , … , 𝑎𝑛 ∈ 𝐑 , then the square of the
+average of 𝑎1 , … , 𝑎𝑛 is less than or equal to the average of 𝑎12, … , 𝑎𝑛2.
+
+14
+
+Suppose 𝑣 ∈ 𝑉 and 𝑣 ≠ 0. Prove that 𝑣/‖𝑣‖ is the unique closest element on
+the unit sphere of 𝑉 to 𝑣. More precisely, prove that if 𝑢 ∈ 𝑉 and ‖𝑢‖ = 1,
+then
+𝑣
+∥𝑣 −
+∥ ≤ ‖𝑣 − 𝑢‖,
+‖𝑣‖
+with equality only if 𝑢 = 𝑣/‖𝑣‖.
+
+15
+
+Suppose 𝑢, 𝑣 are nonzero vectors in 𝐑2. Prove that
+⟨𝑢, 𝑣⟩ = ‖𝑢‖ ‖𝑣‖ cos 𝜃,
+
+where 𝜃 is the angle between 𝑢 and 𝑣 (thinking of 𝑢 and 𝑣 as arrows with
+initial point at the origin).
+Hint: Use the law of cosines on the triangle formed by 𝑢, 𝑣, and 𝑢 − 𝑣.
+
+Linear Algebra Done Right, fourth edition, by Sheldon Axler
+
+Section 6A
+
+16
+
+Inner Products and Norms
+
+193
+
+The angle between two vectors (thought of as arrows with initial point at
+the origin) in 𝐑2 or 𝐑3 can be defined geometrically. However, geometry is
+not as clear in 𝐑𝑛 for 𝑛 > 3. Thus the angle between two nonzero vectors
+𝑥, 𝑦 ∈ 𝐑𝑛 is defined to be
+⟨𝑥, 𝑦⟩
+arccos
+,
+‖𝑥‖ ‖𝑦‖
+where the motivation for this definition comes from Exercise 15. Explain
+why the Cauchy–Schwarz inequality is needed to show that this definition
+makes sense.
+
+17
+
+Prove that
+
+𝑛
+
+𝑛
+
+2
+
+𝑏𝑘2
+)
+𝑘=1 𝑘
+𝑛
+
+( ∑ 𝑎𝑘 𝑏𝑘 ) ≤ ( ∑ 𝑘𝑎𝑘2 )( ∑
+𝑘=1
+
+𝑘=1
+
+for all real numbers 𝑎1 , … , 𝑎𝑛 and 𝑏1 , … , 𝑏𝑛 .
+18
+
+(a) Suppose 𝑓 ∶ [1, ∞) → [0, ∞) is continuous. Show that
+(∫
+
+∞
+
+∞

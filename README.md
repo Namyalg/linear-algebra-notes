@@ -91,6 +91,16 @@ vectors are free.
 **Where:** `assets/dot-product-axes.html` (the visualization), `lecture-1-confusions.md`
 (the settled thread).
 
+### The canonical reference
+
+Everything in the norm / inner-product thread has a clean textbook home:
+**Axler, *Linear Algebra Done Right*, 4e, Chapter 6** (free at
+linear.axler.net/LADR4e.pdf). A snapshot of §6A with a quick-reference map
+(definitions 6.1-6.21: dot product, inner product axioms, norm, orthogonal
+projection, Cauchy-Schwarz, triangle inequality, parallelogram equality)
+is in `assets/axler-ladr-ch6-inner-products.txt`, and `lecture-1-confusions.md`
+cross-references each settled point to Axler's numbering.
+
 ---
 
 ## The one-line philosophy
