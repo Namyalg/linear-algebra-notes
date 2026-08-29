@@ -1,5 +1,11 @@
 # Linear Algebra — Exploratory Notes
 
+**Start here:** [`assets/concept-map.pdf`](assets/concept-map.pdf) — the mind map of
+everything we've covered and how each idea builds on the previous one, plus the
+"ladder of structure" (vector space → normed space → inner product space → metric
+space). It's a living document: as we learn new topics we add branches to the map
+and steps to the chain (`assets/concept-map.tex`, recompile with `pdflatex`).
+
 Working notes kept while teaching myself linear algebra basics. The point of this
 repo is not to summarize a textbook — it's to record *where I got confused and how I
 got unstuck*. Every topic here is one where I went back and forth until it clicked,
