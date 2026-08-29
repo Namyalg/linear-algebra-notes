@@ -8,8 +8,10 @@ This section is the text version. The boxed items (▸) are the canonical textbo
 references that match what's settled here.
 
 1. **Vector space** → dimension → free/fixed
-   - Vector space axioms, P/dimension: **Axler LADR 4e, §1** (free:
-     linear.axler.net/LADR4e.pdf).
+   - Vector space axioms: **Axler LADR 4e, §1** (free: linear.axler.net/LADR4e.pdf).
+   - Dimension: Axler Ch. 2. Note Axler only says "infinite-dimensional" — he never
+     assigns cardinalities, so dim(P) = ℵ₀ (correct in its own right, any Hamel basis
+     has that size) isn't sourced from him; it's our own (verified) claim.
    - Free vs fixed, [3,5] reference: settled here (see topic below).
 2. **Norm** → unit sphere → unit vector
    - Norm, map/range notation: **Axler §6A (6.7)**; **Goodfellow et al., *Deep
@@ -34,15 +36,20 @@ which are the external canonical sources.
 ---
 
 ## Topic: Vector Space Axioms
-**Mistake:** Listing "additive closure" twice — once as a property, once as an axiom.
-**Gotcha:** The 3 properties (additive closure, scalar closure, zero vector) *define* a
-vector space. The axioms (commutativity, associativity, distributivity, additive
-inverse) *follow from* that definition — not a separate checklist.
+**Mistake:** Listing "additive closure, scalar closure, zero vector" as if they alone
+*define* a vector space, and the axioms follow from them.
+**Gotcha:** That 3-item list is the **subspace criterion** — it only works when an
+*ambient* vector space already exists, in which case the other axioms are *inherited*.
+As a standalone definition it's insufficient: e.g. define a·v = 0 for all scalars a;
+closure + zero hold and yet 1·v = v fails, so it's not a vector space. The full set of
+axioms (including the linking ones 1·v = v and (ab)v = a(bv)) IS the definition of a
+vector space; the 3-property check is the subspace test.
 
 ## Topic: "A vector is a stack of numbers"
 **Mistake:** Treating that as the *definition*.
-**Gotcha:** It's a *representation*, only for Rⁿ. A vector is any element of a vector
-space. Pₙ = polynomial as a function, but representable by its coefficient stack ∈ Rⁿ⁺¹.
+**Gotcha:** It's a *representation*, and it works in *any* finite-dimensional space
+once a basis is fixed — not just Rⁿ. A vector is any element of a vector space. Pₙ =
+polynomial as a function, but representable by its coefficient stack ∈ Rⁿ⁺¹.
 
 ## Topic: P = all polynomials is "infinite"
 **Mistake:** Thinking that makes individual vectors infinite.
@@ -68,7 +75,8 @@ the *degree* is unbounded (5, 500, 5,000,000 — all welcome).
 
 ## Topic: Mapping notation `p : R → R`
 **No mistake — get this right for free:**
-- `: A → B` = domain left, range right (used again in norms: ‖·‖ : Rⁿ → R)
+- `: A → B` = domain left, **codomain** right (range ⊆ codomain: e.g. ‖·‖ : Rⁿ → R has
+  range [0,∞), not all of R)
 - `: x ↦ ...` = "maps to," the rule that computes
 
 ---
@@ -79,18 +87,22 @@ the *degree* is unbounded (5, 500, 5,000,000 — all welcome).
 | Rⁿ | n | fixed length |
 | Pₙ | n+1 (**off-by-one trap!**) | degree ≤ n → n+1 coefficients |
 | P | ℵ₀ (countably infinite) | no degree cap |
-| C | uncountably infinite | single vectors escape representation |
+| C | uncountably infinite | no countable basis (Hamel basis uncountable) |
 
 **One idea:** dimension = count of independent directions (basis size), NOT vector
 length. In finite spaces they look the same; in P the basis {1, x, x², ...} never ends.
+(For C: no countable basis exists; e.g. {e^{λx} : λ ∈ R} is an uncountable independent
+family. A single function like sin(x) isn't "unrepresentable" — it just isn't a finite
+combination of powers of x.)
 
 ---
 
 ## Topic: "Degrees of freedom" of a shape (S⁰, S¹, ...)
 **Confusion:** Moving along a circle changes both x and y (in R²), so why only 1 DOF?
-**Core definition:** **DOF = being able to *independently* move / change the value of
-that axis.** If changing x forces y to change too, they are *not* independent — so y is
-not a separate DOF.
+**Core definition:** **DOF = dimension of the space of allowed/motions — how many
+independent directions you can move, i.e. how many knobs you can turn on their own.**
+If changing x forces y to change too, they are *not* independent — one knob, one DOF
+(so the circle's single DOF is an *angle*, not an axis).
 **Gotcha (the knob model):** DOF counts *independent knobs*, not how many readouts
 change. On the circle there's only ONE knob — how far around the loop you are. Turning
 it moves x AND y together because the constraint x² + y² = 1 *welds* them: nudge x and
@@ -172,7 +184,8 @@ y-term was 0·√3 = 0, so only one axis was voting. With (2,1) and (1,√3):
 - The idea is to get the measure of sameness along all axes: x-axis agrees by 2·1 = 2,
 y-axis agrees by 1·√3 ≈ 1.73.
 - u·v = 2 + √3 ≈ 3.73 = ‖u‖‖v‖cosθ = √5·2·cos(33.4°) — same number, both languages.
-- Each axis contributes one rectangle of area; the dot product is the total area.
+- Each axis contributes one rectangle of *signed* area; the dot product is the total
+  (terms can be negative — (−1,√3)·(2,1) < 0).
   Visual: `assets/dot-product-axes.html`.
 
 **The whole arc at a glance (inner product ⟷ norm):**
@@ -190,8 +203,8 @@ y-axis agrees by 1·√3 ≈ 1.73.
   recoordinatized (‖x‖_M = ‖M^½ x‖₂).
 - **One-directional:** inner product ⟹ norm (always, via √⟨x,x⟩); norm ⟹ inner product
   only when the parallelogram law holds (Jordan–von Neumann; polarization recovers it).
-  L₁, L∞ have no inner product — their length data is incompatible with any pairwise
-  alignment.
+  L₁, L∞ have no inner product (for n ≥ 2); in dimension 1 every L_p coincides with L₂.
+  Their length data is incompatible with any pairwise alignment.
 
 **The closing statement (verbatim, as settled):** *The dot product and the norm answer
 different questions but carry the same information. The dot product asks "how similar are
@@ -247,7 +260,8 @@ It is an example of a **norm derived from an inner product**:
   (⟨x, y⟩_M = 0 is not the same as 90° in the usual picture), and changes the unit
   sphere shape (M → ellipse, vs circle for ℓ₂)
 
-**Where it will show up:** Lecture 2 §3.3 (made-up inner product), and later in the
-course when a different norm/inner product becomes genuinely useful (the notes say
-"there are a few important cases where it is useful to have a different norm and inner
-product"). Revisit when Lecture 2's norm section comes up.
+**Where it will show up:** Lecture 2 §3.3 "Dot Product" (incl. the "Revisiting the
+Norm" subsection, which derives the made-up norm from the made-up inner product;
+verified in lecture_2.pdf). The notes confirm: "There are a few important cases where
+it is useful to have a different norm and inner product, so we will revisit this
+concretely when the time comes."
