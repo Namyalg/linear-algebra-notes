@@ -236,6 +236,35 @@ Slight abuse of language to be aware of: when people say "V is an inner product
 space," the inner product is "lurking nearby or clear from context" — for "Fⁿ" it's
 the Euclidean inner product unless otherwise stated (Axler 6.4/6.5).
 
+## Topic: Orthogonal decomposition (formalized, Axler 6.13)
+**The statement.** For u, v ∈ V with v ≠ 0, u splits *uniquely* into a part along v
+and a part orthogonal to v:
+
+    u = cv + w, with ⟨w, v⟩ = 0, where c = ⟨u,v⟩/‖v‖²
+    u = (⟨u,v⟩/‖v‖²)·v  +  (u − (⟨u,v⟩/‖v‖²)·v)
+        └── parallel part (proj_v(u)) ──┘   └── orthogonal part ──┘
+
+**Why c = ⟨u,v⟩/‖v‖² (derived, not guessed):** we want the leftover w = u − cv to be
+orthogonal to v:
+
+    ⟨u − cv, v⟩ = 0  ⟹  ⟨u,v⟩ − c⟨v,v⟩ = 0  ⟹  c = ⟨u,v⟩/‖v‖²   (v ≠ 0 so ‖v‖² ≠ 0)
+
+The scalar is *solved for* by the single requirement "the leftover has no v-component"
+— and because v ≠ 0 fixes c uniquely, the decomposition is unique.
+
+**Same piece, three names** (so notation never surprises you):
+- the along-v part = proj_v(u) = cv = (⟨u,v⟩/‖v‖²)v = ⟨u, v̂⟩v̂
+- the orthogonal part = w = u − proj_v(u) = the "rejection" = v_⟂
+
+**Pythagoras applies** (the two pieces are orthogonal): ‖u‖² = ‖proj_v(u)‖² + ‖w‖².
+This is the engine our triangle-inequality proof used, and it's exactly how Axler
+proves Cauchy–Schwarz in one line (drops the ≥ 0 term).
+
+**Worked example:** u = (2,1), v = (1,√3). ⟨u,v⟩ = 2·1 + 1·√3 = 3.732, ‖v‖² = 4,
+c = 3.732/4 = 0.933. proj_v(u) = 0.933·(1,1.732) = (0.933, 1.616);
+w = (2,1) − (0.933,1.616) = (1.067, −0.616). Check: ⟨proj,w⟩ ≈ 0.996 − 0.995 ≈ 0 ✓
+(they're perpendicular); ‖proj‖² + ‖w‖² ≈ 3.48 + 1.52 ≈ 5.00 = ‖u‖² ✓ (Pythagoras).
+
 ---
 
 ## Reference: Axler, "Linear Algebra Done Right" 4e, Ch. 6 (inner products)
