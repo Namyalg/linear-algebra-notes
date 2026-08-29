@@ -1,5 +1,38 @@
 # Lecture 1 — Confusions & Gotchas
 
+## How topics build on each other (and where each has a home)
+
+**One-glance map:** [`assets/concept-map.pdf`](assets/concept-map.pdf) — mind map + the
+exact concept-à-concept chain (editable source kept locally at `assets/concept-map.tex`).
+This section is the text version. The boxed items (▸) are the canonical textbook
+references that match what's settled here.
+
+1. **Vector space** → dimension → free/fixed
+   - Vector space axioms, P/dimension: **Axler LADR 4e, §1** (free:
+     linear.axler.net/LADR4e.pdf).
+   - Free vs fixed, [3,5] reference: settled here (see topic below).
+2. **Norm** → unit sphere → unit vector
+   - Norm, map/range notation: **Axler §6A (6.7)**; **Goodfellow et al., *Deep
+     Learning*, §2.5** (snapshot: `assets/norm-section-deeplearningbook.txt`).
+   - Unit sphere, DOF, S^(n−1): `assets/unit-spheres.tex`-derived PDF.
+3. **Triangle inequality** ← projection split ← Cauchy–Schwarz
+   - Proof + figure + engine (‖v_∥‖ ≤ ‖v‖ = C–S): `assets/triangle-inequality.tex`
+     (PDF) and `assets/triangle-intuition.html`.
+   - Textbook match: **Axler §6A (6.14, 6.17)**.
+4. **Inner product** ↔ **norm** (the whole arc) → parallelogram law
+   - Dot product = projection, xᵀy = ‖x‖‖y‖cosθ, parallelogram: `assets/dot-product-axes.html`,
+     `assets/parallelogram.html`.
+   - The arc summary and L2 = only rotation-invariant norm: in this doc (below).
+   - Textbook match: **Axler §6A (6.1, 6.2, 6.10–6.21)** — snapshot
+     `assets/axler-ladr-ch6-inner-products.txt`.
+   - Also **Strang, *Introduction to Linear Algebra*** (Ch. 1–2) and **Lay**, *Linear
+     Algebra and its Applications* (Ch. 6) for the same material at a gentler pace.
+
+Everything referenced here lives in this repo (notes + assets) except the textbooks,
+which are the external canonical sources.
+
+---
+
 ## Topic: Vector Space Axioms
 **Mistake:** Listing "additive closure" twice — once as a property, once as an axiom.
 **Gotcha:** The 3 properties (additive closure, scalar closure, zero vector) *define* a
