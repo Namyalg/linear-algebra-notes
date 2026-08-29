@@ -265,6 +265,24 @@ c = 3.732/4 = 0.933. proj_v(u) = 0.933·(1,1.732) = (0.933, 1.616);
 w = (2,1) − (0.933,1.616) = (1.067, −0.616). Check: ⟨proj,w⟩ ≈ 0.996 − 0.995 ≈ 0 ✓
 (they're perpendicular); ‖proj‖² + ‖w‖² ≈ 3.48 + 1.52 ≈ 5.00 = ‖u‖² ✓ (Pythagoras).
 
+## Topic: Span (Lecture 2 §5.1)
+**Definition:** for X = {x₁,...,xₘ}, span(X) = the set of ALL linear combinations of X:
+
+    span(X) = { a₁x₁ + ... + aₘxₘ : a₁,...,aₘ ∈ R }
+
+One linear combination = ONE vector; the span = THE SET of all of them. Two ways to
+hold it: (1) "the set of all vectors you can build from X," or (2) "how much does X
+span / cover" — the extent of the space it reaches.
+
+**Key facts:**
+- span(X) is always a *subspace* (closed under + and scalar · by construction — the
+  Lecture 1 closure idea resurfacing).
+- "How much" is answered by **dimension**: dim(span(X)) = number of *independent*
+  vectors in X. span{(1,0)}=line→1; span{(1,0),(0,1)}=plane→2; adding (2,3) to the
+  latter adds nothing (already reachable) → still 2.
+- Not every vector in X grows the span: if a vector is already in the span, it's
+  *redundant* — which is exactly the doorway into **linear independence** (next).
+
 ## Technique: the "drop the non-negative term" move
 **The template** (seen in Cauchy–Schwarz, the triangle inequality, and everywhere):
 write an exact identity, notice a term is ≥ 0, drop it, and get a ≥ bound.
