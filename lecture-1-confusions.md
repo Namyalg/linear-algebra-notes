@@ -142,6 +142,24 @@ y-axis agrees by 1·√3 ≈ 1.73.
 - Each axis contributes one rectangle of area; the dot product is the total area.
   Visual: `assets/dot-product-axes.html`.
 
+**The whole arc at a glance (inner product ⟷ norm):**
+- **Inner product** = a *generic* two-vectors-into-a-scalar operation, constrained by
+  the 4 axioms (positivity, definiteness, additivity + homogeneity in first slot,
+  conjugate symmetry). It measures *alignment*.
+- **Dot product** = the flagship inner product: the case M = I (identity weighting),
+  i.e. x·y = Σxᵢyᵢ. Every inner product on Rⁿ is xᵀMy for some symmetric
+  positive-definite M; the dot product is M = I.
+- **It induces the L2 norm:** ‖x‖₂ = √⟨x,x⟩ = √(x₁²+...+xₙ²). That's why they pair so
+  well — the dot product was designed so its diagonal reproduces Euclidean length.
+- **L2 is the only rotation-invariant norm** (up to scale). That's the deep payoff:
+  the dot product ↔ L2 match is *the* geometry that stays put under rotation, which is
+  why it's our everyday notion of space. The weighted norms (M ≠ I) are just L2
+  recoordinatized (‖x‖_M = ‖M^½ x‖₂).
+- **One-directional:** inner product ⟹ norm (always, via √⟨x,x⟩); norm ⟹ inner product
+  only when the parallelogram law holds (Jordan–von Neumann; polarization recovers it).
+  L₁, L∞ have no inner product — their length data is incompatible with any pairwise
+  alignment.
+
 ---
 
 ## Reference: Axler, "Linear Algebra Done Right" 4e, Ch. 6 (inner products)
@@ -173,9 +191,10 @@ saved in `assets/axler-ladr-ch6-inner-products.txt`. Quick map:
 
 ---
 
-### 🔖 TO REVISIT LATER: norms derived from an inner product
+### ✅ ARRIVED AT THIS SESSION: norms derived from an inner product
 
-**Thread to come back to (concretely).** The made-up M norm ‖x‖_M = √(x₁² + 2x₂²) on R²
+*(Was flagged "to revisit"; we worked through it — see the "inner product ⟷ norm"
+summary above and the concept map.)* The made-up M norm ‖x‖_M = √(x₁² + 2x₂²) on R²
 is a *weighted* ℓ₂ — first component squared (weight 1), second squared (weight 2).
 It is an example of a **norm derived from an inner product**:
 
