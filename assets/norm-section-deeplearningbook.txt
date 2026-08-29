@@ -1,0 +1,60 @@
+========================================================================
+Snapshot: "Norm = distance to the origin" — the authoritative statement
+========================================================================
+
+Source: Goodfellow, Bengio & Courville, "Deep Learning" (MIT Press, 2016),
+Chapter 2 "Linear Algebra", Section 2.5 "Norms".
+Free online: https://www.deeplearningbook.org/contents/linear_algebra.html
+
+Verbatim text (extracted from the online HTML):
+
+------------------------------------------------------------------------
+"2.5 Norms
+
+Sometimes we need to measure the size of a vector. In machine learning, we
+usually measure the size of vectors using a function called a norm. Formally,
+the Lp norm is given by
+
+    ||x||_p = ( sum_i |x_i|^p )^(1/p)
+
+for p ∈ R, p ≥ 1.
+
+Norms, including the Lp norm, are functions mapping vectors to non-negative
+values. On an intuitive level, the norm of a vector x measures the distance
+from the origin to the point x. More rigorously, a norm is any function f
+that satisfies the following properties:
+
+  * f(x) = 0  ⇒  x = 0
+  * f(x + y) ≤ f(x) + f(y)        (the triangle inequality)
+  * ∀α ∈ R, f(αx) = |α| f(x)
+
+The L2 norm, with p = 2, is known as the Euclidean norm, which is simply the
+Euclidean distance from the origin to the point identified by x. The L2 norm
+is used so frequently in machine learning that it is often denoted simply as
+||x||, with the subscript 2 omitted. It is also common to measure the size of
+a vector using the squared L2 norm, which can be calculated simply as x^T x."
+------------------------------------------------------------------------
+
+WHY THIS MATTERS (our settled reading):
+------------------------------------------------------------------------
+
+1. The book itself marks the "distance to the origin" phrasing as INTUITION
+   ("On an intuitive level") and then gives the 3 axioms as the rigorous
+   definition ("More rigorously"). So: corollary, not definition.
+
+2. Rigorous form of the claim: every norm induces a metric via
+   d(x, y) = ||x - y||, and setting y = 0 gives d(x, 0) = ||x||.
+   This is well-defined for EVERY norm (L2, L1, Linf, M, ...) because the
+   zero vector is guaranteed to exist by the vector-space axioms.
+
+3. The book's L2 phrasing — "the distance from the origin to the point
+   identified by x" — is the POSITION-reading of x. The primary reading is
+   "norm = length of a displacement"; "distance to origin" is the special
+   case after committing to an origin and reading x as a position.
+
+4. Consistent sources: Wikipedia "Norm (mathematics)" (a norm behaves "like
+   the distance from the origin"), USC Math 555 Analysis II lecture notes
+   ("||x|| is thought of as ... the distance from x to 0").
+   Independent check via Claude CLI: verdict matches — corollary, not
+   definition; holds for every norm because the zero vector is guaranteed.
+========================================================================

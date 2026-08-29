@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Triangle Inequality Intuition</title>
+<style>
+  body { font-family: -apple-system, system-ui, sans-serif; margin: 40px; max-width: 900px; }
+  h1 { font-size: 22px; }
+  h2 { font-size: 16px; margin-top: 40px; }
+  .pane { border: 1px solid #ddd; border-radius: 8px; padding: 12px; margin-bottom: 20px; }
+  .note { font-size: 13px; color: #444; }
+  .n { font-style: italic; }
+</style>
+</head>
+<body>
+<h1>Triangle inequality: &#8214;u + v&#8214; &le; &#8214;u&#8214; + &#8214;v&#8214;</h1>
+
+<div class="pane">
+<h2>Case 1 &#8212; same direction: equality</h2>
+<svg width="720" height="240" viewBox="0 0 720 240">
+  <!-- guide arrows -->
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 z" fill="#666"/>
+    </marker>
+    <marker id="arrB" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 z" fill="#d9534f"/>
+    </marker>
+  </defs>
+
+  <!-- u -->
+  <line x1="50" y1="150" x2="270" y2="150" stroke="#666" stroke-width="4" marker-end="url(#arr)"/>
+  <text x="145" y="138" font-size="15" fill="#333">u &#160;(len 2)</text>
+
+  <!-- v, head-to-tail of u -->
+  <line x1="270" y1="150" x2="490" y2="150" stroke="#d9534f" stroke-width="4" marker-end="url(#arrB)"/>
+  <text x="350" y="185" font-size="15" fill="#d9534f">v &#160;(len 2)</text>
+
+  <!-- u+v along same line -->
+  <line x1="50" y1="110" x2="650" y2="110" stroke="#337ab7" stroke-width="5" marker-end="url(#arr)"/>
+  <text x="300" y="98" font-size="15" fill="#337ab7">u + v &#160;(len 4)</text>
+
+  <text x="50" y="220" font-size="14" fill="#333">u and v are parallel in the SAME direction &#8594; every bit of v adds to u's length.</text>
+  <text x="50" y="235" font-size="14" fill="#337ab7" font-weight="bold">&#8214;u + v&#8214; = &#8214;u&#8214; + &#8214;v&#8214; = 2 + 2 = 4</text>
+</svg>
+</div>
+
+<div class="pane">
+<h2>Case 2 &#8212; v at an angle: strict inequality</h2>
+<svg width="720" height="320" viewBox="0 0 720 320">
+  <!-- u -->
+  <line x1="50" y1="280" x2="330" y2="280" stroke="#666" stroke-width="4" marker-end="url(#arr)"/>
+  <text x="165" y="265" font-size="15" fill="#333">u &#160;(len 2.00)</text>
+
+  <!-- v head-to-tail of u, at 60 deg -->
+  <line x1="330" y1="280" x2="460" y2="120" stroke="#d9534f" stroke-width="4" marker-end="url(#arrB)"/>
+  <text x="410" y="205" font-size="15" fill="#d9534f">v (len 2.00)</text>
+
+  <!-- u+v -->
+  <line x1="50" y1="280" x2="460" y2="120" stroke="#337ab7" stroke-width="5" marker-end="url(#arr)"/>
+  <text x="225" y="180" font-size="15" fill="#337ab7">u + v</text>
+
+  <!-- dashed: parallel part of v along u -->
+  <line x1="330" y1="280" x2="430" y2="280" stroke="#999" stroke-width="2" stroke-dasharray="6,4"/>
+  <text x="352" y="298" font-size="13" fill="#666">v parallel (proj) len 1.00</text>
+
+  <!-- dashed: perpendicular part -->
+  <line x1="430" y1="280" x2="460" y2="120" stroke="#d9534f" stroke-width="2" stroke-dasharray="6,4"/>
+  <text x="435" y="200" font-size="13" fill="#d9534f">v perpendicular (rejected)</text>
+
+  <!-- brace for len 4 vs 3.46 -->
+  <text x="50" y="40" font-size="14" fill="#333">v is angled, so only its PARALLEL part (len 1.00) extends u's line.</text>
+  <text x="50" y="58" font-size="14" fill="#333">Its perpendicular part is "lost" sideways.</text>
+  <text x="50" y="76" font-size="14" fill="#337ab7" font-weight="bold">&#8214;u + v&#8214; = &#8730;(2&#178;+2&#178;+2&#183;2&#183;2&#183;cos60&#176;) &#8776; 3.46 &#160;&lt;&#160; 2 + 2 = 4</text>
+</svg>
+</div>
+
+<p class="note">Head-to-tail is how you <strong>always</strong> draw u+v. Equality holds only when u and v are parallel and point the same way. Any angle &gt; 0 loses the perpendicular part, so the straight side (u+v) is shorter than walking u then v &#8212; that's the triangle.</p>
+
+</body>
+</html>

@@ -1,0 +1,12 @@
+# LaTeX build artifacts
+*.aux
+*.log
+*.out
+*.toc
+
+# Course lecture PDFs — keep local only, not for the public repo
+lecture_1.pdf
+lecture_2.pdf
+
+# LaTeX sources — PDFs only, keep minimal
+*.tex
