@@ -120,6 +120,21 @@ Visuals: `assets/basis-coordinates-visual.html` (orthonormal vs non-orthogonal
 coordinates), `assets/projection-sum-vs-vector-sum.html` (why you can't project
 onto u₁+u₂).
 
+### 0. Fields — the scalars' home
+**Why it's the base of everything:** a vector space multiplies its vectors by
+*scalars*, and those scalars have to come from a field — a number system where add,
+subtract, multiply, and divide (except by zero) always stay inside, and the
+operations obey the usual rules. ℚ, ℝ, ℂ are all fields; ℤ isn't, because 1/2 falls
+out of the box. Formally a field is just two operations, (F,+) and (F∖{0},×), both
+abelian groups, with × distributing over + — subtraction and division are just
+inverses in disguise. Worth having before vector spaces, because the whole reason
+the scalars live on a field is so division (solving systems, Cramer, determinants)
+is always legal.
+
+**Where:** [`field.md`](field.md) (the build-it-up-from-a-set write-up),
+`lecture-1-confusions.md` (the 2-ops-vs-4-ops gotcha, verified by independent
+review).
+
 ### The canonical reference
 
 Everything in the norm / inner-product thread has a clean textbook home:
