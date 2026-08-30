@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>proj_u1 + proj_u2  vs  proj_(u1+u2)</title>
+<style>
+  :root{--bg:#f7f8fb;--ink:#1a1a2e;--muted:#5c5c70;--orange:#e8590c;--blue:#2563eb;--green:#2f9e44;--red:#e03131;--purple:#9c36b5;}
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;}
+  .wrap{max-width:1180px;margin:0 auto;padding:22px 20px 60px;}
+  h1{font-size:20px;margin:0 0 4px;}
+  .sub{color:var(--muted);font-size:13.5px;margin-bottom:16px;}
+  .banner{background:#1a1a2e;color:#fff;border-radius:9px;padding:10px 14px;font-size:13.5px;line-height:1.5;margin-bottom:16px;}
+  .banner b{color:#ffd43b;}
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  @media(max-width:900px){.cols{grid-template-columns:1fr;}}
+  .card{background:#fff;border:1px solid #e2e5ee;border-radius:11px;padding:12px 14px;box-shadow:0 1px 3px rgba(0,0,0,.04);}
+  .tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.04em;padding:2px 9px;border-radius:6px;margin-bottom:6px;text-transform:uppercase;}
+  .tag.good{background:#e6f4ea;color:#1e7e34;}
+  .tag.bad{background:#fdeaea;color:#b3261e;}
+  canvas{width:100%;height:auto;display:block;background:#fff;}
+  .readout{font-size:13px;line-height:1.7;margin-top:6px;border-top:1px solid #eee;padding-top:8px;font-family:"SF Mono",Menlo,Consolas,monospace;}
+  .legend{font-size:12px;color:var(--muted);margin-top:8px;display:flex;gap:14px;flex-wrap:wrap;}
+  .legend span{display:inline-flex;gap:5px;align-items:center;}
+  .sw{width:11px;height:11px;border-radius:3px;display:inline-block;}
+  .identity{background:#fff;border:1px solid #e2e5ee;border-left:4px solid var(--purple);border-radius:11px;padding:12px 16px;margin-top:16px;font-size:13.5px;line-height:1.8;}
+  .identity b{color:var(--purple);}
+  .identity code{font-family:"SF Mono",Menlo,Consolas,monospace;font-size:12.5px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Two ways to "remove the covered part" of v = (4,5)</h1>
+  <div class="sub">u₁ = (1,0) and u₂ = (0,1) are orthogonal. Same target v. Two candidate subtractions — only one removes everything covered.</div>
+  <div class="banner"><b>The core rule:</b> the <i>sum of projections</i> (proj<sub>u₁</sub> + proj<sub>u₂</sub>) is OK <i>only because</i> u₁ ⟂ u₂. The <i>projection of the vector-sum</i> proj<sub>(u₁+u₂)</sub> is a DIFFERENT operation that conflates the two directions — always suspect.</div>
+
+  <div class="cols">
+    <div class="card">
+      <span class="tag good">Correct — sum of projections: proj_u₁(v) + proj_u₂(v)</span>
+      <canvas id="c1" width="460" height="460"></canvas>
+      <div class="readout">
+        proj_u₁(v) = (4,0) &nbsp;+&nbsp; proj_u₂(v) = (0,5)<br>
+        total covered = <b>(4,5)</b> &nbsp;→&nbsp; leftover v − (4,5) = <b>(0,0)</b> ✓<br>
+        (every covered direction peeled separately → nothing left)<br>
+        <span style="color:var(--purple)">(4,0)+(0,5) = (4.5,4.5) + (−0.5,0.5) — keeps BOTH rotated pieces</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="tag bad">Wrong — projection of the vector sum: proj_(u₁+u₂)(v)</span>
+      <canvas id="c2" width="460" height="460"></canvas>
+      <div class="readout">
+        u₁+u₂ = (1,1);&nbsp; proj_(1,1)(v) = (9/2)(1,1) = <b>(4.5,4.5)</b><br>
+        leftover = (4,5) − (4.5,4.5) = <b>(−0.5, 0.5)</b> ✗<br>
+        <span style="color:var(--purple)">(−0.5,0.5) IS proj_(1,−1)(v) — the anti-diagonal piece this operation DROPS</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="identity">
+    <b>The exact relationship:</b> the two operations differ by exactly one term.<br>
+    <code>&nbsp;proj_u₁(v) + proj_u₂(v)&nbsp; = &nbsp;proj_(u₁+u₂)(v) + proj_(u₁−u₂)(v)</code><br>
+    <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(4,5)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = &nbsp;&nbsp;(4.5,4.5)&nbsp;&nbsp;&nbsp;&nbsp; + &nbsp;&nbsp;(−0.5,0.5)</code><br>
+    Sum of projections = the <b>full v</b> (keeps both rotated pieces). Projection of the sum = <b>only the diagonal piece</b> — it drops the anti-diagonal one, and that dropped piece is the entire difference. They're equal only when v lies exactly on the diagonal (anti-diagonal component = 0).
+  </div>
+
+  <div class="legend">
+    <span><span class="sw" style="background:#7a7ad9"></span>u₁,u₂ (axes)</span>
+    <span><span class="sw" style="background:var(--orange)"></span>v target (4,5)</span>
+    <span><span class="sw" style="background:var(--blue)"></span>proj axis 1</span>
+    <span><span class="sw" style="background:var(--green)"></span>proj axis 2</span>
+    <span><span class="sw" style="background:var(--red)"></span>diagonal (1,1) + its projection</span>
+    <span><span class="sw" style="background:var(--purple)"></span>anti-diagonal (1,−1) + its projection</span>
+  </div>
+</div>
+
+<script>
+ const W=460,H=460,O={x:230,y:402},U=34;
+ const PX=x=>O.x+x*U, PY=y=>O.y-y*U;
+ const v={x:4,y:5};
+ function seg(ctx,x0,y0,x1,y1,col,wd,dash){
+   ctx.save(); if(dash)ctx.setLineDash([6,6]);
+   ctx.strokeStyle=col;ctx.lineWidth=wd||5;ctx.lineCap='round';
+   ctx.beginPath();ctx.moveTo(PX(x0),PY(y0));ctx.lineTo(PX(x1),PY(y1));ctx.stroke();ctx.restore();
+   if(!dash){const a=Math.atan2(PY(y1)-PY(y0),PX(x1)-PX(x0)),h=13;ctx.fillStyle=col;
+     ctx.beginPath();ctx.moveTo(PX(x1)+h*Math.cos(a),PY(y1)+h*Math.sin(a));
+     ctx.lineTo(PX(x1)+h*.55*Math.cos(a+2.7),PY(y1)+h*.55*Math.sin(a+2.7));
+     ctx.lineTo(PX(x1)+h*.55*Math.cos(a-2.7),PY(y1)+h*.55*Math.sin(a-2.7));ctx.closePath();ctx.fill();}
+ }
+ function grid(ctx){
+   ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);
+   ctx.strokeStyle='#eef0f6';ctx.lineWidth=1;
+   for(let g=0;g<=6;g++){ctx.beginPath();ctx.moveTo(PX(g),0);ctx.lineTo(PX(g),H);ctx.stroke();
+     ctx.beginPath();ctx.moveTo(0,PY(g));ctx.lineTo(W,PY(g));ctx.stroke();}
+   ctx.strokeStyle='#c9cde9';ctx.lineWidth=1.2;
+   ctx.beginPath();ctx.moveTo(PX(0),0);ctx.lineTo(PX(0),H);ctx.stroke();
+   ctx.beginPath();ctx.moveTo(0,PY(0));ctx.lineTo(W,PY(0));ctx.stroke();
+   ctx.fillStyle='#a5aabd';ctx.font='11px sans-serif';ctx.textAlign='center';
+   for(let g=1;g<=5;g++)ctx.fillText(g,PX(g),PY(0)+14);
+   for(let g=1;g<=5;g++)ctx.fillText(g,PX(0)-26,PY(g)+3);
+ }
+ function dot(ctx,x,y,col,r){ctx.beginPath();ctx.arc(PX(x),PY(y),r||5,0,7);ctx.fillStyle=col;ctx.fill();}
+ function lab(ctx,t,x,y,col,size){ctx.font=(size||12)+'px sans-serif';ctx.fillStyle=col;ctx.fillText(t,x,y);}
+
+ // ---- LEFT: correct, sum of projections ----
+ (function(){
+   const ctx=document.getElementById('c1').getContext('2d');
+   grid(ctx);
+   seg(ctx,0,0,1,0,'#7a7ad9',2.5); lab(ctx,'u₁',PX(1)+6,PY(0)+16,'#6b6b9f',13);
+   seg(ctx,0,0,0,1,'#7a7ad9',2.5); lab(ctx,'u₂',PX(0)+14,PY(1)+2,'#6b6b9f',13);
+   // projections
+   seg(ctx,0,0,0,5,'var(--green)',5);
+   seg(ctx,0,0,4,0,'var(--blue)',5);
+   lab(ctx,'proj_u₂=(0,5)',PX(0)+10,PY(0)-30,'var(--green)',12);
+   lab(ctx,'proj_u₁=(4,0)',PX(2),PY(0)+24,'var(--blue)',12);
+   dot(ctx,4,5,'#e8590c');
+   seg(ctx,0,0,4,5,'var(--orange)',4);
+   lab(ctx,'v=(4,5)',PX(4)+6,PY(5)-8,'#e8590c',13);
+   lab(ctx,'(4,0)+(0,5)=(4,5)=v',PX(0)+46,PY(5)-54,'#1f2937',12);
+ })();
+
+ // ---- RIGHT: wrong, projection onto vector sum ----
+ (function(){
+   const ctx=document.getElementById('c2').getContext('2d');
+   grid(ctx);
+   seg(ctx,0,0,1,0,'#7a7ad9',2.5); lab(ctx,'u₁',PX(1)+6,PY(0)+16,'#6b6b9f',13);
+   seg(ctx,0,0,0,1,'#7a7ad9',2.5); lab(ctx,'u₂',PX(0)+14,PY(1)+2,'#6b6b9f',13);
+   // diagonal (1,1) = u1+u2
+   seg(ctx,0,0,1,1,'#e03131',3); lab(ctx,'u₁+u₂=(1,1)',PX(1)+6,PY(1)-6,'#e03131',12);
+   // projection onto diagonal = (4.5,4.5)
+   seg(ctx,0,0,4.5,4.5,'rgba(224,49,49,.6)',4);
+   dot(ctx,4.5,4.5,'#e03131');
+   lab(ctx,'proj_(1,1)(v)=(4.5,4.5)',PX(0)+46,PY(4.5)-46,'#e03131',12);
+   // v
+   dot(ctx,4,5,'#e8590c');
+   seg(ctx,0,0,4,5,'var(--orange)',4);
+   lab(ctx,'v=(4,5)',PX(4)+6,PY(5)-10,'#e8590c',13);
+   // anti-diagonal axis (1,-1) = u1-u2
+   seg(ctx,0,0,1.5,-1.5,'var(--purple)',2.5,true);
+   lab(ctx,'u₁−u₂=(1,−1)',PX(1.5)+6,PY(-1.5)+16,'var(--purple)',11);
+   // the DROPPED piece = projection of v onto the anti-diagonal = (-0.5, 0.5)
+   seg(ctx,0,0,-0.5,0.5,'var(--purple)',4);
+   dot(ctx,-0.5,0.5,'var(--purple)');
+   lab(ctx,'leftover (−0.5,0.5) = proj_(1,−1)(v)',PX(-0.5)-150,PY(0.5)+16,'var(--purple)',11);
+   // same vector, translated: from proj_(1,1) tip to v tip
+   seg(ctx,4.5,4.5,4,5,'rgba(156,54,181,.55)',2.5,true);
+   // right angle mark at v tip (leftover ⟂ diagonal)
+   ctx.strokeStyle='rgba(224,49,49,.5)';ctx.lineWidth=1.3;
+   ctx.beginPath();ctx.moveTo(PX(4),PY(5));
+   ctx.lineTo(PX(4)+ (4.5-4)*0.6, PY(5) - (4.5-5)*0.6);
+   ctx.lineTo(PX(4)+ (4.5-4)*0.6 + (5-4.5)*0.6, PY(5) - (4.5-5)*0.6 - (5-4.5)*0.6);
+   ctx.stroke();
+ })();
+</script>
+</body>
+</html>

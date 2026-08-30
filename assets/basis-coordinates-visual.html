@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Representing w in two bases: projection vs solve</title>
+<style>
+  :root { --bg:#f7f8fb; --ink:#1a1a2e; --muted:#5c5c70; --orange:#e8590c; --blue:#2563eb; --green:#2f9e44; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font-family:-apple-system,"Segoe UI",Helvetica,Arial,sans-serif; }
+  .wrap { max-width:1120px; margin:0 auto; padding:22px 20px 60px; }
+  h1 { font-size:20px; margin:0 0 4px; }
+  .sub { color:var(--muted); font-size:13.5px; margin-bottom:16px; }
+  .banner { background:#1a1a2e; color:#fff; border-radius:9px; padding:10px 14px; font-size:13.5px; line-height:1.45; margin-bottom:18px; }
+  .banner b { color:#ffd43b; }
+  .cols { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  @media (max-width:860px){ .cols { grid-template-columns:1fr; } }
+  .card { background:#fff; border:1px solid #e2e5ee; border-radius:11px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.04); }
+  .tag { display:inline-block; font-size:11px; font-weight:700; letter-spacing:.04em; padding:2px 9px; border-radius:6px; margin-bottom:6px; text-transform:uppercase; }
+  .tag.ok { background:#e6f4ea; color:#1e7e34; }
+  .tag.bad{ background:#fdeaea; color:#b3261e; }
+  canvas { width:100%; height:auto; display:block; background:#fff; }
+  .readout { font-size:13px; line-height:1.7; margin-top:6px; border-top:1px solid #eee; padding-top:8px; font-family:"SF Mono",Menlo,Consolas,monospace; }
+  .readout b.ok{color:#1e7e34;} .readout b.bad{color:#b3261e;}
+  .legend { font-size:12px; color:var(--muted); margin-top:8px; display:flex; gap:14px; flex-wrap:wrap; }
+  .legend span{display:inline-flex;gap:5px;align-items:center;}
+  .sw{width:11px;height:11px;border-radius:3px;display:inline-block;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Representing w = (3,5) in two different bases</h1>
+  <div class="sub">Both panels split w into "part along v₁" + "part along v₂". The ONLY difference is how easy it is to find the parts.</div>
+  <div class="banner"><b>The idea:</b> superposition happens in every basis. Orthogonality only decides the difficulty — perpendicular axes ⟹ each part is <b>the projection</b> (one dot product, read off alone); slanted axes ⟹ the projection <b>lies</b>, you must <b>solve</b>.</div>
+
+  <div class="cols">
+    <div class="card">
+      <span class="tag ok">Orthonormal · v₁=(1,0), v₂=(0,1)</span>
+      <canvas id="c1" width="460" height="460"></canvas>
+      <div class="readout">
+        a₁ = w·v₁ = 3 &nbsp;|&nbsp; a₂ = w·v₂ = 5<br>
+        <b class="ok">projection = coefficient, each read off alone ✓</b>
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="tag bad">Non-orthogonal · v₁=(2,1), v₂=(1,2)</span>
+      <canvas id="c2" width="460" height="460"></canvas>
+      <div class="readout">
+        naive projection on v₁ = <b class="bad">2.2</b> &nbsp;≠&nbsp; TRUE coefficient <b class="bad">1/3</b><br>
+        axes overlap (not perpendicular) ⟹ <b class="bad">must solve the system</b>
+      </div>
+    </div>
+  </div>
+
+  <div class="legend">
+    <span><span class="sw" style="background:var(--blue)"></span>a₁v₁ (part from v₁)</span>
+    <span><span class="sw" style="background:var(--green)"></span>a₂v₂ (part from v₂)</span>
+    <span><span class="sw" style="background:var(--orange)"></span>w target</span>
+    <span><span class="sw" style="background:#7a7ad9"></span>v₁,v₂ axes</span>
+    <span><span class="sw" style="background:#b8b8e0"></span>projection drop (perpendicular)</span>
+  </div>
+</div>
+
+<script>
+// ---- geometry ----
+const W=460, H=460;
+const O={x:230, y:402};
+const U=34;
+const PX=(x)=>O.x + x*U;
+const PY=(y)=>O.y - y*U;
+const w={x:3,y:5};
+
+const darkBlue='rgba(30,64,175,.9)', darkGreen='rgba(22,101,52,.9)';
+
+function seg(ctx,x0,y0,x1,y1,col,wd){
+  ctx.strokeStyle=col; ctx.lineWidth=wd||5; ctx.lineCap='round';
+  ctx.beginPath(); ctx.moveTo(PX(x0),PY(y0)); ctx.lineTo(PX(x1),PY(y1)); ctx.stroke();
+  // arrowhead
+  const a=Math.atan2(PY(y1)-PY(y0), PX(x1)-PX(x0)), h=13;
+  ctx.fillStyle=col;
+  ctx.beginPath();
+  ctx.moveTo(PX(x1)+h*Math.cos(a), PY(y1)+h*Math.sin(a));
+  ctx.lineTo(PX(x1)+h*0.55*Math.cos(a+2.7), PY(y1)+h*0.55*Math.sin(a+2.7));
+  ctx.lineTo(PX(x1)+h*0.55*Math.cos(a-2.7), PY(y1)+h*0.55*Math.sin(a-2.7));
+  ctx.closePath(); ctx.fill();
+}
+function dashedLine(ctx,x0,y0,x1,y1,col){
+  ctx.save(); ctx.setLineDash([6,6]);
+  ctx.strokeStyle=col; ctx.lineWidth=1.7;
+  ctx.beginPath(); ctx.moveTo(PX(x0),PY(y0)); ctx.lineTo(PX(x1),PY(y1)); ctx.stroke();
+  ctx.restore();
+}
+function dot(ctx,x,y,col,r){
+  ctx.beginPath(); ctx.arc(PX(x),PY(y),r||5,0,7); ctx.fillStyle=col; ctx.fill();
+}
+function rightAngle(ctx, u, v){
+  // right-angle square at point P=(u.x,u.y); the xx side is in direction toward v (perp); other side along dropDir
+  const ddx=u.x-v.x, ddy=u.y-v.y;           // from landing -> w (perpendicular to axis)
+  const dl=Math.max(Math.hypot(ddx,ddy),1e-6);
+  const nx=ddx/dl, ny=ddy/dl;               // unit toward w
+  // axis direction unit (perpendicular to (nx,ny))
+  const tx=-ny, ty=nx;
+  const s=7;
+  ctx.strokeStyle='rgba(0,0,0,.55)'; ctx.lineWidth=1.4;
+  ctx.beginPath();
+  ctx.moveTo(PX(u.x),PY(u.y));
+  ctx.lineTo(PX(u.x)+ tx*s*U*0.18, PY(u.y)- ty*s*U*0.18);
+  ctx.lineTo(PX(u.x)+ tx*s*U*0.18 + nx*s*U*0.16, PY(u.y)- ty*s*U*0.18 - ny*s*U*0.16);
+  ctx.lineTo(PX(u.x)+ nx*s*U*0.16, PY(u.y)- ny*s*U*0.16);
+  ctx.stroke();
+}
+function axis(ctx, vec, lab){
+  const x=vec.x*3.4, y=vec.y*3.4;   // draw axis long
+  seg(ctx,0,0,x,y,'rgba(139,139,180,.75)',2.2);
+  ctx.fillStyle='#6b6b9f'; ctx.font='bold 14px sans-serif';
+  ctx.fillText(lab, PX(x)+6, PY(y)+4);
+  // small unit tick
+  dot(ctx,vec.x,vec.y,'#9a9cC8',2.5);
+}
+function vec(ctx,x0,y0,x1,y1,col){
+  seg(ctx,x0,y0,x1,y1,col,4);
+}
+
+function drawGrid(ctx){
+  ctx.fillStyle='#fff'; ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle='#eef0f6'; ctx.lineWidth=1;
+  for(let g=0; g<=8; g++){
+    ctx.beginPath(); ctx.moveTo(PX(g),0); ctx.lineTo(PX(g),H); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0,PY(g)); ctx.lineTo(W,PY(g)); ctx.stroke();
+  }
+  ctx.strokeStyle='#c9cde9'; ctx.lineWidth=1.2;
+  ctx.beginPath(); ctx.moveTo(PX(0),0); ctx.lineTo(PX(0),H); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(0,PY(0)); ctx.lineTo(W,PY(0)); ctx.stroke();
+  ctx.fillStyle='#a5aabd'; ctx.font='11px sans-serif';
+  ctx.textAlign='center';
+  for(let g=1;g<=6;g++){ ctx.fillText(g,PX(g),PY(0)+14); }
+  ctx.textAlign='right';
+  for(let g=1;g<=5;g++){ ctx.fillText(g,PX(0)-28,PY(g)+3); }
+}
+
+function drop(ctx, wp, land, color, label, labelAt){
+  dashedLine(ctx, wp.x,wp.y, land.x,land.y, color);
+  dot(ctx, land.x, land.y, color);
+  rightAngle(ctx, land, wp);
+  ctx.font='bold 12px sans-serif'; ctx.textAlign='left';
+  ctx.fillStyle=color;
+  if(labelAt==='top'){ ctx.fillText(label, PX(0)+8, PY(wp.y)-24); }
+  else if(labelAt==='mid1'){ ctx.fillText(label, PX(wp.x)+8, (PY(wp.y)+PY(land.y))/2-4); }
+  else { ctx.fillText(label, PX(wp.x)+10, PY(land.y)+2); }
+}
+
+// ---------- Render two panels ----------
+// ORTHONORMAL v1=(1,0),v2=(0,1); coefficients 3 and 5; projection points (3,0) and (0,5)
+(function renderOrtho(){
+  const ctx=document.getElementById('c1').getContext('2d');
+  drawGrid(ctx);
+  axis(ctx, {x:1,y:0}, 'v₁'); axis(ctx, {x:0,y:1}, 'v₂');
+
+  // projections land exactly on the axis = coefficient is the projection number
+  drop(ctx, w, {x:3,y:0}, 'rgba(37,99,235,.8)', 'proj = 3', 'side1');
+  drop(ctx, w, {x:0,y:5}, 'rgba(47,158,68,.8)', 'proj = 5', 'side2');
+
+  // true split = same as projections here
+  seg(ctx,0,0,3,0,'rgba(37,99,235,.95)');
+  seg(ctx,3,0,3,5,'rgba(47,158,68,.95)');
+
+  ctx.fillStyle=darkBlue; ctx.font='bold 12px sans-serif';
+  ctx.fillText('3·v₁', PX(1.5), PY(0)-8);
+  ctx.fillStyle=darkGreen; ctx.fillText('5·v₂', PX(3)+8, PY(2.5));
+
+  vec(ctx,0,0,w.x,w.y,'#e8590c');
+  ctx.fillStyle='#e8590c'; ctx.font='bold 14px sans-serif';
+  ctx.fillText('w=(3,5)', PX(w.x)+6, PY(w.y)-8);
+})();
+
+// NON-ORTHOGONAL v1=(2,1),v2=(1,2); true a1=1/3,a2=7/3; naive projections 2.2 -> (4.4,2.2) and (2.2,4.4)
+(function renderNonOrtho(){
+  const ctx=document.getElementById('c2').getContext('2d');
+  drawGrid(ctx);
+  axis(ctx, {x:2,y:1}, 'v₁'); axis(ctx, {x:1,y:2}, 'v₂');
+
+  // naive projection of w onto v1 direction: t=(w·v1)/||v1||^2 = 11/5 = 2.2 -> point 2.2*(2,1)=(4.4,2.2)
+  drop(ctx, w, {x:4.4,y:2.2}, 'rgba(37,99,235,.8)', 'naive proj = 2.2', 'mid1');
+  // naive projection onto v2: t=11/5 -> point (2.2,4.4)
+  drop(ctx, w, {x:2.2,y:4.4}, 'rgba(47,158,68,.8)', 'naive proj = 2.2', 'mid2');
+
+  // TRUE split: (1/3)(2,1) + (7/3)(1,2)
+  const e1={x:(1/3)*2, y:(1/3)*1};
+  const e2={x:(7/3)*1, y:(7/3)*2};
+  seg(ctx,0,0,e1.x,e1.y,'rgba(37,99,235,.95)');
+  seg(ctx,e1.x,e1.y,e1.x+e2.x,e1.y+e2.y,'rgba(47,158,68,.95)');
+
+  // mark the true a1 tip which sits SHORT of the naive landing (4.4,2.2)
+  dot(ctx, e1.x, e1.y, '#1e40af');
+  ctx.fillStyle='#1e40af'; ctx.font='bold 12px sans-serif';
+  ctx.fillText('true a₁v₁', PX(e1.x)+4, PY(e1.y)-10);
+  ctx.strokeStyle='rgba(30,64,175,.4)'; ctx.lineWidth=1.3;
+  ctx.setLineDash([2,3]);
+  ctx.beginPath(); ctx.moveTo(PX(e1.x),PY(e1.y)); ctx.lineTo(PX(4.4),PY(2.2)); ctx.stroke();
+  ctx.setLineDash([]);
+
+  vec(ctx,0,0,w.x,w.y,'#e8590c');
+  ctx.fillStyle='#e8590c'; ctx.font='bold 14px sans-serif';
+  ctx.fillText('w=(3,5)', PX(w.x)+6, PY(w.y)-8);
+})();
+</script>
+</body>
+</html>
