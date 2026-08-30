@@ -4,7 +4,7 @@
 everything we've covered and how each idea builds on the previous one, plus the
 "ladder of structure" (vector space → normed space → inner product space → metric
 space). It's a living document: as we learn new topics we add branches to the map
-and steps to the chain (`assets/concept-map.tex`, recompile with `pdflatex`).
+and steps to the chain (rebuilt from a local `.tex` source with `pdflatex`; only the PDF is committed).
 
 Working notes kept while teaching myself linear algebra basics. The point of this
 repo is not to summarize a textbook — it's to record *where I got confused and how I
@@ -38,7 +38,7 @@ disguise, and that the dot product is the machinery behind the whole proof — w
 why inner products get promoted to the central tool later. Everything connects.
 
 **Where:**
-- `assets/triangle-inequality.tex` / `.pdf` — the full proof with figure, including
+- `assets/triangle-inequality.pdf` — the full proof with figure, including
   the equality analysis (both inequalities must collapse, not one) and the C–S bridge.
   This doc went through two rounds of independent review — it's the sharp version
   underneath the casual one.
@@ -55,7 +55,7 @@ y is forced — so one knob is all you get.
 the sphere lives one dimension below its ambient space: S^(n−1) = the surface in Rⁿ
 minus the one direction the norm equation locked down.
 
-**Where:** `assets/unit-spheres.tex` / `.pdf` — the DOF argument, the S⁰/S¹/S² table,
+**Where:** `assets/unit-spheres.pdf` — the DOF argument, the S⁰/S¹/S² table,
 and the four unit-sphere shapes (circle / diamond / square / ellipse) showing that
 changing the norm changes what "distance 1" means.
 
@@ -113,7 +113,7 @@ the coefficients *directly readable as projections* instead of solving a system.
   entries themselves
 
 **Where:** the concept map now carries the full chain (mind-map branches + steps
-11–15 in `assets/concept-map.tex`), and the gotchas live in
+11–15 in `assets/concept-map.pdf`), and the gotchas live in
 `lecture-1-confusions.md` (incl. the dot-product-is-a-scalar slip, sum-of-
 projections vs projection-of-the-sum, and the 3D Gram–Schmidt worked examples).
 Visuals: `assets/basis-coordinates-visual.html` (orthonormal vs non-orthogonal

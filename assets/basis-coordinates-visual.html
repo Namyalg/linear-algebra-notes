@@ -48,6 +48,7 @@
       <canvas id="c2" width="460" height="460"></canvas>
       <div class="readout">
         naive projection on v₁ = <b class="bad">2.2</b> &nbsp;≠&nbsp; TRUE coefficient <b class="bad">1/3</b><br>
+        naive projection on v₂ = <b class="bad">2.6</b> &nbsp;≠&nbsp; TRUE coefficient <b class="bad">7/3</b><br>
         axes overlap (not perpendicular) ⟹ <b class="bad">must solve the system</b>
       </div>
     </div>
@@ -172,9 +173,7 @@ function drop(ctx, wp, land, color, label, labelAt){
   vec(ctx,0,0,w.x,w.y,'#e8590c');
   ctx.fillStyle='#e8590c'; ctx.font='bold 14px sans-serif';
   ctx.fillText('w=(3,5)', PX(w.x)+6, PY(w.y)-8);
-})();
-
-// NON-ORTHOGONAL v1=(2,1),v2=(1,2); true a1=1/3,a2=7/3; naive projections 2.2 -> (4.4,2.2) and (2.2,4.4)
+})();  // NON-ORTHOGONAL v1=(2,1),v2=(1,2); true a1=1/3,a2=7/3; naive projections 2.2 -> (4.4,2.2) and 2.6 -> (2.6,5.2)
 (function renderNonOrtho(){
   const ctx=document.getElementById('c2').getContext('2d');
   drawGrid(ctx);
@@ -182,8 +181,8 @@ function drop(ctx, wp, land, color, label, labelAt){
 
   // naive projection of w onto v1 direction: t=(w·v1)/||v1||^2 = 11/5 = 2.2 -> point 2.2*(2,1)=(4.4,2.2)
   drop(ctx, w, {x:4.4,y:2.2}, 'rgba(37,99,235,.8)', 'naive proj = 2.2', 'mid1');
-  // naive projection onto v2: t=11/5 -> point (2.2,4.4)
-  drop(ctx, w, {x:2.2,y:4.4}, 'rgba(47,158,68,.8)', 'naive proj = 2.2', 'mid2');
+  // naive projection onto v2: t=(w·v2)/||v2||^2 = (3+10)/5 = 13/5 = 2.6 -> point 2.6*(1,2)=(2.6,5.2)
+  drop(ctx, w, {x:2.6,y:5.2}, 'rgba(47,158,68,.8)', 'naive proj = 2.6', 'mid2');
 
   // TRUE split: (1/3)(2,1) + (7/3)(1,2)
   const e1={x:(1/3)*2, y:(1/3)*1};

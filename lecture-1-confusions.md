@@ -325,7 +325,7 @@ bigger. det ≠ 0 ⟺ invertible ⟺ unique solution.
 ## Gram–Schmidt: subtract ALL the parallel parts, one axis at a time
 **The plan:** for each new vector, properly remove the parallel part of EVERY axis
 already built (u₁, u₂, ...), leaving a piece perpendicular to each, then normalize it.
-wspecifically: w = v − proj_u₁(v) − proj_u₂(v) − ... (subtract parallel part of each
+Specifically: w = v − proj_u₁(v) − proj_u₂(v) − ... (subtract parallel part of each
 axis already present, get something perp to every one of them), then u = w/‖w‖.
 
 **Trap — "sum of projections" vs "projection of the sum":**
@@ -367,7 +367,7 @@ coordinate is the classic slip. (Flipping any uᵢ → −uᵢ is still valid.)
 **Worked 3D example #2** (v₁=(1,1,0), v₂=(1,0,1), v₃=(1,2,1)): same u₁, u₂; the
 double peel does real work: proj_u₁(v₃)=(3/2,3/2,0), proj_u₂(v₃)=(1/6,−1/6,1/3),
 w₃ = v₃ − both = (−2/3,2/3,2/3), u₃ = (−1/√3,1/√3,1/√3).
-**Both subtractions, always:** v₃ − proj_u₁ ONLY gives (5/6,13/6,2/3) — wrong, still
+**Both subtractions, always:** v₃ − proj_u₂ ONLY gives (5/6,13/6,2/3) — wrong, still
 has a u₁ component (and fails the dot-against-u₁ check). wₖ needs every projection
 subtracted.
 
