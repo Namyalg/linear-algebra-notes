@@ -127,6 +127,25 @@ Linear algebra uses free vectors (that's why a vector is just a "stack of
 numbers" — no location). Real-world picks depend on context: velocity = free,
 position = fixed, force = depends (fixed on a beam, loose on a free body).
 
+**Force is a SLIDING (line) vector, not simply free or fixed (verified).** Mechanics
+trinary: **free** (translate anywhere — velocity, displacement) · **sliding/line**
+(slide along its own line of action — force) · **fixed/bound** (pinned to a reference
+point — position, torque/moment). This is the *principle of transmissibility* for
+forces on a rigid body: slide the force along its line, the effect is unchanged; jump
+to a *parallel* line, the torque changes. Why the point of application matters — and
+only *how* it matters: torque magnitude = |F| × perpendicular distance from the
+reference point to the **line of action** (moment arm); the exact point is irrelevant.
+So pushing a box through its center: r = 0 → no rotation; off-center: r ≠ 0 → spins.
+
+**Force as a vector needs NO origin; as a force-as-applied it needs a line, not a
+point (verified).** F = (3,4) ∈ R² encodes direction + magnitude only — "3 along e₁, 4
+along e₂," the free/displacement reading, works from any start. A 3D force needs 3
+components: F = (3,4,0). To describe the force *as applied* (rotation in the picture)
+you need the vector **plus any point on its line of action** — not "the" point of
+application: two points on the same line give identical rigid-body effect (same torque
+about any reference). That freedom is exactly what makes it *sliding* rather than
+*bound*.
+
 **Fair question asked (settled, verified by independent review): does [3,5] need a
 reference point?** Two readings: as a *position* (point) it needs an origin (and that
 origin is a *free choice* — no point is canonical in position space); as a *displacement*
