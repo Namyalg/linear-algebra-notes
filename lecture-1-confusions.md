@@ -341,6 +341,11 @@ axis already present, get something perp to every one of them), then u = w/‖w�
   Sum-of-projections = full v (both rotated pieces); projection-of-sum = only the
   diagonal piece — it DROPS the anti-diagonal piece proj_(u₁−u₂)(v), which is the
   whole difference. Equal only when v lies on the diagonal (perp component = 0).
+- Where (1,1)/(1,−1) come from: u₁+u₂ and u₁−u₂ are the SQUARE'S DIAGONALS = a second
+  orthonormal frame, the axes rotated 45° (equal-length orthogonal vectors give a
+  perpendicular sum & difference: (u₁+u₂)·(u₁−u₂) = ‖u₁‖²−‖u₂‖² = 0). The identity's
+  RHS is just v decomposed in that rotated frame: sum-of-projections = both terms,
+  projection-of-sum = only the diagonal term.
 - Visual: `assets/projection-sum-vs-vector-sum.html`.
 - Gram–Schmidt overall: `assets/` (worked 2D example in confusions thread).
 

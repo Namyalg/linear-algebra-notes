@@ -13,12 +13,14 @@
   .sub{color:var(--muted);font-size:13.5px;margin-bottom:16px;}
   .banner{background:#1a1a2e;color:#fff;border-radius:9px;padding:10px 14px;font-size:13.5px;line-height:1.5;margin-bottom:16px;}
   .banner b{color:#ffd43b;}
-  .cols{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
-  @media(max-width:900px){.cols{grid-template-columns:1fr;}}
+  .cols{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  @media(max-width:1120px){.cols{grid-template-columns:1fr 1fr;}}
+  @media(max-width:760px){.cols{grid-template-columns:1fr;}}
   .card{background:#fff;border:1px solid #e2e5ee;border-radius:11px;padding:12px 14px;box-shadow:0 1px 3px rgba(0,0,0,.04);}
   .tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.04em;padding:2px 9px;border-radius:6px;margin-bottom:6px;text-transform:uppercase;}
   .tag.good{background:#e6f4ea;color:#1e7e34;}
   .tag.bad{background:#fdeaea;color:#b3261e;}
+  .tag.info{background:#e8f0fe;color:#1a56db;}
   canvas{width:100%;height:auto;display:block;background:#fff;}
   .readout{font-size:13px;line-height:1.7;margin-top:6px;border-top:1px solid #eee;padding-top:8px;font-family:"SF Mono",Menlo,Consolas,monospace;}
   .legend{font-size:12px;color:var(--muted);margin-top:8px;display:flex;gap:14px;flex-wrap:wrap;}
@@ -56,13 +58,24 @@
         <span style="color:var(--purple)">(−0.5,0.5) IS proj_(1,−1)(v) — the anti-diagonal piece this operation DROPS</span>
       </div>
     </div>
+
+    <div class="card">
+      <span class="tag info">Rotated frame: the same v, split along the 45° axes</span>
+      <canvas id="c3" width="460" height="460"></canvas>
+      <div class="readout">
+        v = proj_d(v) + proj_a(v) = <b>(4.5,4.5)</b> + <b>(−0.5,0.5)</b> = <b>(4,5)</b> ✓<br>
+        (d = (1,1)/√2, a = (1,−1)/√2 — the square's diagonals = axes tilted 45°)<br>
+        sum-of-projections keeps BOTH terms; projection-of-sum keeps only the first
+      </div>
+    </div>
   </div>
 
   <div class="identity">
     <b>The exact relationship:</b> the two operations differ by exactly one term.<br>
     <code>&nbsp;proj_u₁(v) + proj_u₂(v)&nbsp; = &nbsp;proj_(u₁+u₂)(v) + proj_(u₁−u₂)(v)</code><br>
     <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(4,5)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = &nbsp;&nbsp;(4.5,4.5)&nbsp;&nbsp;&nbsp;&nbsp; + &nbsp;&nbsp;(−0.5,0.5)</code><br>
-    Sum of projections = the <b>full v</b> (keeps both rotated pieces). Projection of the sum = <b>only the diagonal piece</b> — it drops the anti-diagonal one, and that dropped piece is the entire difference. They're equal only when v lies exactly on the diagonal (anti-diagonal component = 0).
+    Sum of projections = the <b>full v</b> (keeps both rotated pieces). Projection of the sum = <b>only the diagonal piece</b> — it drops the anti-diagonal one, and that dropped piece is the entire difference. They're equal only when v lies exactly on the diagonal (anti-diagonal component = 0).<br><br>
+    The right-hand side is v decomposed in a SECOND orthonormal frame: {d, a} = {(1,1)/√2, (1,−1)/√2} — the unit square's diagonals, i.e. the original axes rotated 45°. Panel 3 shows this decomposition.
   </div>
 
   <div class="legend">
@@ -151,6 +164,34 @@
    ctx.lineTo(PX(4)+ (4.5-4)*0.6, PY(5) - (4.5-5)*0.6);
    ctx.lineTo(PX(4)+ (4.5-4)*0.6 + (5-4.5)*0.6, PY(5) - (4.5-5)*0.6 - (5-4.5)*0.6);
    ctx.stroke();
+ })();
+
+ // ---- THIRD: same v in the rotated frame {d, a} ----
+ (function(){
+   const ctx=document.getElementById('c3').getContext('2d');
+   grid(ctx);
+   seg(ctx,0,0,1,0,'#7a7ad9',2.5); lab(ctx,'u₁',PX(1)+6,PY(0)+16,'#6b6b9f',13);
+   seg(ctx,0,0,0,1,'#7a7ad9',2.5); lab(ctx,'u₂',PX(0)+14,PY(1)+2,'#6b6b9f',13);
+   // rotated axes: d = (1,1)/√2, a = (1,−1)/√2 (the square's diagonals)
+   seg(ctx,0,0,1,1,'#e03131',2.5); lab(ctx,'d=(1,1)/√2',PX(1)+6,PY(1)-6,'#e03131',12);
+   seg(ctx,0,0,1,-1,'var(--purple)',2.5,true); lab(ctx,'a=(1,−1)/√2',PX(1)+8,PY(-1)+12,'var(--purple)',11);
+   // v
+   dot(ctx,4,5,'#e8590c');
+   seg(ctx,0,0,4,5,'var(--orange)',4);
+   lab(ctx,'v=(4,5)',PX(4)+6,PY(5)-10,'#e8590c',13);
+   // diagonal piece: proj_d(v) = (9/√2)·d = (4.5,4.5)
+   seg(ctx,0,0,4.5,4.5,'rgba(224,49,49,.65)',4);
+   dot(ctx,4.5,4.5,'#e03131');
+   lab(ctx,'proj_d(v)=(4.5,4.5)',PX(0)+40,PY(4.5)-40,'#e03131',12);
+   // anti-diagonal piece: proj_a(v) = (−1/√2)·a = (−0.5,0.5)
+   seg(ctx,0,0,-0.5,0.5,'rgba(156,54,181,.7)',4);
+   dot(ctx,-0.5,0.5,'var(--purple)');
+   lab(ctx,'proj_a(v)=(−0.5,0.5)',PX(-0.5)-140,PY(0.5)+16,'var(--purple)',11);
+   // parallelogram: the two pieces close the loop at v
+   seg(ctx,4.5,4.5,4,5,'rgba(156,54,181,.5)',2,true);
+   seg(ctx,-0.5,0.5,4,5,'rgba(224,49,49,.5)',2,true);
+   // rotated-frame coordinates
+   lab(ctx,'v = (9/√2)d + (−1/√2)a',PX(0)+20,PY(5)-96,'#1f2937',12);
  })();
 </script>
 </body>
