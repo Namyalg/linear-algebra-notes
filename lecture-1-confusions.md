@@ -265,6 +265,15 @@ c = 3.732/4 = 0.933. proj_v(u) = 0.933·(1,1.732) = (0.933, 1.616);
 w = (2,1) − (0.933,1.616) = (1.067, −0.616). Check: ⟨proj,w⟩ ≈ 0.996 − 0.995 ≈ 0 ✓
 (they're perpendicular); ‖proj‖² + ‖w‖² ≈ 3.48 + 1.52 ≈ 5.00 = ‖u‖² ✓ (Pythagoras).
 
+## Topic: Why 2 independent vectors span R² (the whole argument)
+- Condition: u, v not multiples of each other ⟺ det = u₁v₂ − u₂v₁ ≠ 0.
+- det ≠ 0 ⟺ the system (au₁+bv₁, au₂+bv₂) = (w₁,w₂) has a UNIQUE solution for
+  EVERY w — nonzero denominator means always solvable.
+- Hence every w ∈ R² = au + bv → they span R² → independent + spanning = basis.
+- One condition, three hats: "not parallel" ⟺ "det ≠ 0" ⟺ "every w built uniquely."
+- 2-vector specific: det is the whole test. For larger sets, need the general test
+  (Σcᵢvᵢ = 0 ⟹ all cᵢ = 0) — no single number does it.
+
 ## Topic: Basis & dimension (Lecture 2 §5.4)
 **Basis = the minimum set of vectors that span M** (no redundancy). "Minimum" =
 linearly independent = can't remove any vector and still span M. Either phrasing works:
