@@ -347,6 +347,13 @@ axis already present, get something perp to every one of them), then u = w/‖w�
   RHS is just v decomposed in that rotated frame: sum-of-projections = both terms,
   projection-of-sum = only the diagonal term.
 - Visual: `assets/projection-sum-vs-vector-sum.html`.
+
+**"Same line, different lengths" (why the leftover direction is fixed):** the
+leftover is EXACTLY the projection of xₖ onto the perpendicular space — (xₖ·p̂)·p̂ in
+2D. Projection onto a line always lands on that line; only the scalar (xₖ·p̂) varies
+with xₖ, changing the length (and sign), never the direction. Intuition: after u₁ is
+"horizontal," p̂ is the only perpendicular direction left. Visual:
+`assets/perp-line-leftovers.html`.
 - Gram–Schmidt overall: `assets/` (worked 2D example in confusions thread).
 
 **Gotcha — dot product is a SCALAR, always.** (1,2,1)·(1,1,0) = 1·1 + 2·1 + 1·0 =

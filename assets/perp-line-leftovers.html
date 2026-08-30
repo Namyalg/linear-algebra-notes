@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Same line, different lengths — why the leftover lands on p̂</title>
+<style>
+  :root{--bg:#f7f8fb;--ink:#1a1a2e;--muted:#5c5c70;}
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;}
+  .wrap{max-width:860px;margin:0 auto;padding:22px 20px 60px;}
+  h1{font-size:20px;margin:0 0 4px;}
+  .sub{color:var(--muted);font-size:13.5px;margin-bottom:14px;}
+  .banner{background:#1a1a2e;color:#fff;border-radius:9px;padding:10px 14px;font-size:13.5px;line-height:1.5;margin-bottom:16px;}
+  .banner b{color:#ffd43b;}
+  canvas{width:100%;height:auto;display:block;background:#fff;border:1px solid #e2e5ee;border-radius:11px;}
+  .readout{font-size:12.5px;line-height:1.75;margin-top:12px;border:1px solid #e2e5ee;border-radius:11px;background:#fff;padding:12px 14px;font-family:"SF Mono",Menlo,Consolas,monospace;}
+  .readout .row{display:flex;gap:18px;flex-wrap:wrap;}
+  .readout .r{min-width:300px;}
+  .legend{font-size:12px;color:var(--muted);margin-top:8px;display:flex;gap:14px;flex-wrap:wrap;}
+  .legend span{display:inline-flex;gap:5px;align-items:center;}
+  .sw{width:11px;height:11px;border-radius:3px;display:inline-block;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Same line, different lengths</h1>
+  <div class="sub">u₁ = (2,1)/√5 fixed. Four different v₂'s. Each leftover is the projection of v₂ onto the perpendicular line p̂ = (−1,2)/√5 — so it always lands on that line; only its length varies.</div>
+  <div class="banner"><b>The rule:</b> v₂ = (v₂·u₁)u₁ + (v₂·p̂)p̂ (unique split). Gram–Schmidt subtracts the u₁-part; the leftover is <i>exactly</i> (v₂·p̂)·p̂ — a projection onto p̂. A projection onto a line always lands on that line.</div>
+  <canvas id="cv" width="560" height="560"></canvas>
+  <div class="readout" id="ro"></div>
+  <div class="legend">
+    <span><span class="sw" style="background:#7a7ad9"></span>u₁ (built axis)</span>
+    <span><span class="sw" style="background:#0b7285"></span>p̂ = the perpendicular line</span>
+    <span><span class="sw" style="background:#e8590c"></span>v₂ (incoming)</span>
+    <span><span class="sw" style="background:#adb5bd"></span>u₁-part removed (drop)</span>
+    <span><span class="sw" style="background:#37b24d"></span>leftover = (v₂·p̂)·p̂</span>
+  </div>
+</div>
+<script>
+ const W=560,H=560,O={x:280,y:280},U=55;
+ const PX=x=>O.x+x*U, PY=y=>O.y-y*U;
+ const s5=Math.sqrt(5);
+ const u1={x:2/s5,y:1/s5};
+ const p={x:-1/s5,y:2/s5};
+ const vs=[{x:1,y:2},{x:4,y:0},{x:0,y:3},{x:-2,y:1}];
+ const cols=['#e8590c','#d6336c','#7048e8','#0b7285'];
+
+ function arrow(ctx,x0,y0,x1,y1,col,wd,dash){
+   ctx.save(); if(dash)ctx.setLineDash([5,5]);
+   ctx.strokeStyle=col;ctx.lineWidth=wd||4;ctx.lineCap='round';
+   ctx.beginPath();ctx.moveTo(PX(x0),PY(y0));ctx.lineTo(PX(x1),PY(y1));ctx.stroke();
+   ctx.restore();
+   if(!dash){
+     const a=Math.atan2(PY(y1)-PY(y0),PX(x1)-PX(x0)),h=12;
+     ctx.fillStyle=col;
+     ctx.beginPath();ctx.moveTo(PX(x1)+h*Math.cos(a),PY(y1)+h*Math.sin(a));
+     ctx.lineTo(PX(x1)+h*.55*Math.cos(a+2.7),PY(y1)+h*.55*Math.sin(a+2.7));
+     ctx.lineTo(PX(x1)+h*.55*Math.cos(a-2.7),PY(y1)+h*.55*Math.sin(a-2.7));
+     ctx.closePath();ctx.fill();
+   }
+ }
+ function lab(ctx,t,x,y,col,size){ctx.font=(size||12)+'px sans-serif';ctx.fillStyle=col;ctx.fillText(t,x,y);}
+
+ const ctx=document.getElementById('cv').getContext('2d');
+ ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);
+ ctx.strokeStyle='#eef0f6';ctx.lineWidth=1;
+ for(let g=-4;g<=4;g++){
+   ctx.beginPath();ctx.moveTo(PX(g),0);ctx.lineTo(PX(g),H);ctx.stroke();
+   ctx.beginPath();ctx.moveTo(0,PY(g));ctx.lineTo(W,PY(g));ctx.stroke();
+ }
+ ctx.strokeStyle='#c9cde9';ctx.lineWidth=1.2;
+ ctx.beginPath();ctx.moveTo(PX(0),0);ctx.lineTo(PX(0),H);ctx.stroke();
+ ctx.beginPath();ctx.moveTo(0,PY(0));ctx.lineTo(W,PY(0));ctx.stroke();
+
+ // u1 axis
+ arrow(ctx,0,0,u1.x*2.2,u1.y*2.2,'#7a7ad9',3);
+ lab(ctx,'u₁',PX(u1.x*2.2)+6,PY(u1.y*2.2)-4,'#6b6b9f',13);
+ // p̂ line both directions
+ arrow(ctx,0,0,p.x*2.6,p.y*2.6,'#0b7285',2.5,true);
+ arrow(ctx,0,0,-p.x*2.6,-p.y*2.6,'#0b7285',2.5,true);
+ lab(ctx,'p̂ = (−1,2)/√5',PX(-p.x*2.6)-160,PY(-p.y*2.6)+18,'#0b7285',12);
+
+ let html='<div class="row">';
+ vs.forEach((v,i)=>{
+   const c=cols[i];
+   const dot=v.x*p.x+v.y*p.y;          // v₂·p̂  (a scalar!)
+   const w={x:dot*p.x,y:dot*p.y};      // leftover = (v₂·p̂)·p̂
+   // v₂ arrow
+   arrow(ctx,0,0,v.x,v.y,c,3.5);
+   // drop: the u₁-part being removed (v tip -> leftover tip, parallel to u₁)
+   arrow(ctx,v.x,v.y,w.x,w.y,'rgba(120,120,150,.5)',1.6,true);
+   // leftover along p̂
+   arrow(ctx,0,0,w.x,w.y,c,4);
+   lab(ctx,'v₂',PX(v.x)+(v.x>3? -34:6),PY(v.y)-6,c,12);
+   const lx=w.x<0?PX(w.x)-128:PX(w.x)+6;
+   lab(ctx,'w=('+w.x.toFixed(1)+','+w.y.toFixed(1)+')',lx,PY(w.y)+(w.y<0?16:-6),c,11);
+   const k=-w.x;                       // w = k·(−1,2)  → k = −w.x
+   html+=`<div class="r"><b style="color:${c}">v₂=(${v.x},${v.y})</b> &nbsp; v₂·p̂ = ${(dot).toFixed(2)} &nbsp;→&nbsp; leftover = (${w.x.toFixed(2)}, ${w.y.toFixed(2)}) = <b>${k.toFixed(2)}·(−1, 2)</b> ✓ same line</div>`;
+ });
+ html+='</div>';
+ document.getElementById('ro').innerHTML=html;
+</script>
+</body>
+</html>
