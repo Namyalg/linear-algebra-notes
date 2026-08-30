@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Why the minus sign flips in R<sub>y</sub> — the zx-plane</title>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; }
+  body { font-family: Georgia, serif; background: #fafafa; color: #222; margin: 0; padding: 24px; line-height: 1.5; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  .sub { color: #555; font-size: 14px; margin-bottom: 14px; }
+  .panel-title { font-weight: bold; margin: 16px 0 6px; font-size: 15px; }
+  canvas { background: #fff; border: 1px solid #ddd; border-radius: 6px; display: block; max-width: 100%; width: 100%; }
+  .row { display: flex; gap: 18px; flex-wrap: wrap; }
+  .row > div { flex: 1 1 340px; min-width: 320px; }
+  .legend { font-size: 13px; color: #333; margin-top: 8px; line-height: 1.6; }
+  .minus { color: #c0392b; font-weight: bold; }
+  .plus  { color: #1e8449; font-weight: bold; }
+  .note { background: #fdf6e3; border-left: 4px solid #b58900; padding: 10px 14px; border-radius: 4px; margin-top: 16px; font-size: 14px; }
+  .eq { text-align: center; font-size: 15px; margin: 14px 0; }
+  .fp { font-family: "Courier New", monospace; font-size: 13px; }
+</style>
+</head>
+<body>
+<h1>Rotating the $zx$-plane about $y$ by 90°</h1>
+<div class="sub">The 2D engine rotates a frame through the pair (first → second, second → −first).
+Only the <b>labeling</b> of which physical axis is "first" decides where the minus lands.</div>
+
+<div class="row">
+  <div>
+    <div class="panel-title">A · The geometric move (z is first, x is second)</div>
+    <canvas id="ca" width="620" height="440"></canvas>
+    <div class="legend">
+      <b>z&nbsp;→&nbsp;+x</b> and <b>x&nbsp;→&nbsp;−z</b>. The <span class="minus">−1</span> is literally
+      the "<b>second&nbsp;→&nbsp;−first</b>" move: x gets thrown to −z.
+    </div>
+  </div>
+  <div>
+    <div class="panel-title">B · Where that lands in the matrix (rows read x, y, z)</div>
+    <canvas id="cb" width="620" height="440"></canvas>
+    <div class="legend">
+      In the matrix, <b>x</b> is the top row and <b>z</b> is the bottom row. The plane's
+      "first" axis (z) therefore occupies the <b>bottom</b> row, so the
+      <span class="minus">−sin</span> shows up <b>bottom-left</b> (z-row, x-column).
+    </div>
+  </div>
+</div>
+
+<div class="eq fp">
+  R<sub>y</sub>(90°) = ⌈ 0&nbsp;0&nbsp;1 ⌉ &nbsp;&nbsp;&nbsp;col3 = image of z = (+1,0,0) ✓<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| 0&nbsp;1&nbsp;0 |<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;⌊ −1&nbsp;0&nbsp;0 ⌋ &nbsp;&nbsp;&nbsp;col1 = image of x = (0,0,−1) ✓
+</div>
+
+<div class="note">
+  <b>Why it's not arbitrary:</b> the 2D rotation always puts "−sin" at <i>first-row /
+  second-column</i> of its block. For R<sub>z</sub> the plane {x,y} matches the matrix
+  rows, so −sin is top-right. For R<sub>y</sub> the plane's first axis is <b>z</b>, but z
+  is the <b>bottom</b> matrix row — so −sin moves to <b>bottom-left</b>. The sign tracks
+  the axes; it is never picked by hand.
+</div>
+
+<script>
+"use strict";
+const OR = {x: 310, y: 220}; // canvas center
+const L  = 150;              // arrow length factor
+
+function setup(id){ const c = document.getElementById(id); const ctx=c.getContext('2d'); ctx.clearRect(0,0,c.width,c.height); return ctx; }
+
+function grid(ctx){
+  ctx.strokeStyle='#efefef'; ctx.lineWidth=1;
+  for(let i=-140;i<=140;i+=40){
+    ctx.beginPath(); ctx.moveTo(OR.x+i-140, OR.y-140); ctx.lineTo(OR.x+i-140, OR.y+140); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(OR.x-140, OR.y+i-140); ctx.lineTo(OR.x+140, OR.y+i-140); ctx.stroke();
+  }
+}
+function worldAxes(ctx){
+  ctx.strokeStyle='#bbb'; ctx.lineWidth=1.5; ctx.setLineDash([5,4]);
+  ctx.beginPath(); ctx.moveTo(OR.x-L,OR.y); ctx.lineTo(OR.x+L,OR.y); ctx.stroke();   // x
+  ctx.beginPath(); ctx.moveTo(OR.x,OR.y-L); ctx.lineTo(OR.x,OR.y+L); ctx.stroke();   // z
+  ctx.setLineDash([]);
+  ctx.fillStyle='#999'; ctx.font='italic 14px Georgia';
+  ctx.fillText('+x', OR.x+L+4, OR.y+16);
+  ctx.fillText('+z', OR.x-24, OR.y-L+4);
+}
+function arrow(ctx, v, color, width){
+  ctx.beginPath(); ctx.moveTo(OR.x,OR.y); ctx.lineTo(OR.x+v[0]*L, OR.y-v[1]*L);
+  ctx.strokeStyle=color; ctx.lineWidth=width; ctx.lineCap='round'; ctx.stroke();
+  const a=Math.atan2(-v[1],v[0]);
+  ctx.beginPath();
+  ctx.moveTo(OR.x+v[0]*L, OR.y-v[1]*L);
+  ctx.lineTo(OR.x+v[0]*L-11*Math.cos(a-0.42), OR.y-v[1]*L+11*Math.sin(a-0.42));
+  ctx.lineTo(OR.x+v[0]*L-11*Math.cos(a+0.42), OR.y-v[1]*L+11*Math.sin(a+0.42));
+  ctx.closePath(); ctx.fillStyle=color; ctx.fill();
+}
+function tag(ctx, v, txt, color, dx, dy){
+  ctx.font='bold 14px Georgia'; ctx.fillStyle=color;
+  ctx.fillText(txt, OR.x+v[0]*L+dx, OR.y-v[1]*L+dy);
+}
+
+/* Panel A: BEFORE (dashed, gray) and AFTER (solid) frame */
+(function(){
+  const ctx = setup('ca');
+  grid(ctx); worldAxes(ctx);
+  // Before: z points up, x points right  (the frame we start from)
+  arrow(ctx,[1,0], '#c0c0c0', 2); arrow(ctx,[0,1], '#c0c0c0', 2);
+  tag(ctx,[1,0], 'x (before)', '#999', 10, 18);
+  tag(ctx,[0,1], 'z (before)', '#999', 14, 2);
+  // After: z' → +x, x' → −z
+  arrow(ctx,[1,0], '#7d3cff', 4);
+  arrow(ctx,[0,-1], '#1e8449', 4);
+  tag(ctx,[1,0],  'z → +x', '#7d3cff', 12, -8);
+  tag(ctx,[0,-1], 'x → −z', '#1e8449', 12, 26);
+  ctx.font='italic 14px Georgia'; ctx.fillStyle='#c0392b';
+  ctx.fillText('second → −first  (the −1)', OR.x-L*0.5, OR.y+L*0.55);
+})();
+
+/* Panel B: same move, but viewed through matrix row order (x top, z bottom) */
+(function(){
+  const ctx = setup('cb');
+  grid(ctx); worldAxes(ctx);
+  // Draw the two ROWS as horizontal bands is overkill; instead show z sitting on the bottom row.
+  // Before
+  arrow(ctx,[1,0], '#c0c0c0', 2); arrow(ctx,[0,1], '#c0c0c0', 2);
+  // After
+  arrow(ctx,[1,0], '#7d3cff', 4);   // image of z = +x  (this is column 3 → (1,0,0))
+  arrow(ctx,[0,-1], '#c0392b', 4);  // image of x = −z (this is column 1 → (0,0,−1)), painted red = the −
+  tag(ctx,[1,0],   'col3 = img of z = (+1,0,0)', '#7d3cff', -40, -10);
+  tag(ctx,[0,-1],  'col1 = img of x = (0,0,−1)', '#c0392b', 50, 26);
+  // Mini matrix on the right
+  ctx.font='bold 13px Georgia'; ctx.fillStyle='#222';
+  const mx=OR.x+L+20, my=OR.y+20; const cell=20;
+  const M=[[0,0,1],[0,1,0],[-1,0,0]];
+  for(let r=0;r<3;r++) for(let cci=0;cci<3;cci++){
+    const val=M[r][cci];
+    ctx.fillStyle = (val===1)?'#1e8449': (val===-1)?'#c0392b':'#ccc';
+    ctx.fillText(String(val), mx+cci*cell+4, my+r*cell+16);
+  }
+  ctx.fillStyle='#999'; ctx.font='italic 13px Georgia';
+  ctx.fillText('R_y(90°)', mx, my-6);
+  // annotate bottom-left as the minus
+  ctx.strokeStyle='#c0392b'; ctx.lineWidth=1.5;
+  ctx.strokeRect(mx-2, my+2*cell-1, cell-2, cell-1);
+  ctx.fillStyle='#c0392b'; ctx.font='bold 11px Georgia';
+  ctx.fillText('the −', mx+cell+6, my+2*cell+13);
+})();
+</script>
+</body>
+</html>
