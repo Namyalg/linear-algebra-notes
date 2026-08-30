@@ -245,3 +245,35 @@ and the three together satisfy the field axioms.
 **Only after this idea is solid should we bring vectors back in.** The connection to
 vector spaces then becomes much easier: the field supplies the **scalars** you are
 allowed to multiply vectors by.
+
+---
+
+## Reference & one step further: ordered fields and completeness
+
+The formal definition here matches **Gressman, *Advanced Analysis*, "Complete
+Ordered Fields"** (upenn.edu). It states the field axioms as a triple $(F,+,\cdot)$
+with the five rules we used — commutativity, associativity, identities ($0\neq 1$),
+inverses, and distributivity — and then *derives* consequences like $0\cdot a = 0$
+and $-a = (-1)\cdot a$ from those axioms rather than assuming them. It also proves
+the inverses are **unique** (there's only one $-a$ and one $a^{-1}$).
+
+That page then adds **two things a bare field doesn't give you:**
+
+1. **Ordered field** — a field *plus* a total order $<$ obeying trichotomy,
+transitivity, and the rules that adding preserves $<$ and multiplying by a positive
+$c$ preserves $<$. Key payoff: $0<1$ is *provable* from the axioms.
+2. **Completeness** — every nonempty set bounded above has a least upper bound
+(supremum). This is what makes **ℝ** special among fields.
+
+**Why this matters for our earlier "gap-free" discussion:** ℚ is an *ordered* field,
+but it is **not complete** — $\{x \in \mathbb Q : x^2 < 2\}$ has no supremum *in*
+ℚ; the hole is $\sqrt 2$. ℝ is the complete ordered field, which is exactly why the
+reals have no gaps and scalar closure always "lands inside". So the ladder is:
+
+> field → ordered field → **complete** ordered field (ℝ vs ℚ vs ℂ)
+
+(The complex numbers ℂ are a field but are *not* ordered — none of the order axioms
+can be made to hold — so "order" is what separates ℝ/ℚ from ℂ, even though all three
+are fields.)
+
+Source: <https://www2.math.upenn.edu/~gressman/analysis/01-orderedfields.html>
