@@ -3,148 +3,453 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Why the minus sign flips in R<sub>y</sub> — the zx-plane</title>
+<title>Why &minus;sin moves to bottom-left in R<sub>y</sub> &mdash; the zx-plane</title>
 <style>
-  :root { color-scheme: light; }
-  * { box-sizing: border-box; }
-  body { font-family: Georgia, serif; background: #fafafa; color: #222; margin: 0; padding: 24px; line-height: 1.5; }
-  h1 { font-size: 22px; margin: 0 0 4px; }
-  .sub { color: #555; font-size: 14px; margin-bottom: 14px; }
-  .panel-title { font-weight: bold; margin: 16px 0 6px; font-size: 15px; }
-  canvas { background: #fff; border: 1px solid #ddd; border-radius: 6px; display: block; max-width: 100%; width: 100%; }
-  .row { display: flex; gap: 18px; flex-wrap: wrap; }
-  .row > div { flex: 1 1 340px; min-width: 320px; }
-  .legend { font-size: 13px; color: #333; margin-top: 8px; line-height: 1.6; }
-  .minus { color: #c0392b; font-weight: bold; }
-  .plus  { color: #1e8449; font-weight: bold; }
-  .note { background: #fdf6e3; border-left: 4px solid #b58900; padding: 10px 14px; border-radius: 4px; margin-top: 16px; font-size: 14px; }
-  .eq { text-align: center; font-size: 15px; margin: 14px 0; }
-  .fp { font-family: "Courier New", monospace; font-size: 13px; }
+  :root{
+    --bg:#f7f7f7;
+    --panel-bg:#ffffff;
+    --ink:#1a1a1a;
+    --muted:#666;
+    --border:#e0e0e0;
+    --x-color:#c0392b;   /* original +x (red) */
+    --xp-color:#e07b00;  /* rotated x' (orange) */
+    --z-color:#2166ac;   /* original +z (blue) */
+    --zp-color:#0b8f6b;  /* rotated z' (teal) */
+  }
+  *{ box-sizing:border-box; }
+  body{
+    margin:0;
+    padding:24px;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height:1.5;
+  }
+  h1{
+    font-size:1.4rem;
+    margin:0 0 2px;
+    font-weight:700;
+    text-align:center;
+  }
+  .subtitle{
+    text-align:center;
+    color:var(--muted);
+    font-size:0.92rem;
+    margin:0 0 18px;
+  }
+  .controls{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    max-width:720px;
+    margin:0 auto 22px;
+    background:var(--panel-bg);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:16px 20px;
+    box-shadow:0 1px 3px rgba(0,0,0,0.04);
+  }
+  .controls label{
+    font-weight:600;
+    font-size:0.95rem;
+    white-space:nowrap;
+  }
+  .controls input[type=range]{
+    flex:1;
+    accent-color:var(--x-color);
+  }
+  .angle-readout{
+    font-variant-numeric:tabular-nums;
+    font-size:0.9rem;
+    font-weight:600;
+    min-width:150px;
+    text-align:right;
+    color:var(--ink);
+  }
+  .wrap{
+    display:flex;
+    flex-wrap:wrap;
+    gap:24px;
+    justify-content:center;
+    max-width:1100px;
+    margin:0 auto;
+  }
+  .panel{
+    background:var(--panel-bg);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:18px 20px 20px;
+    width:500px;
+    max-width:100%;
+    box-shadow:0 1px 3px rgba(0,0,0,0.04);
+  }
+  .panel h2{
+    font-size:1rem;
+    margin:0 0 4px;
+    font-weight:650;
+  }
+  .panel .desc{
+    color:var(--muted);
+    font-size:0.83rem;
+    margin:0 0 12px;
+    line-height:1.4;
+  }
+  canvas{
+    display:block;
+    width:100%;
+    height:auto;
+    background:#fff;
+    border-radius:6px;
+  }
+  .caption{
+    margin-top:12px;
+    font-size:0.85rem;
+    line-height:1.5;
+    color:#333;
+    background:#f6f6f6;
+    border-left:3px solid var(--x-color);
+    padding:8px 12px;
+    border-radius:4px;
+  }
+  .legend{
+    display:flex;
+    flex-wrap:wrap;
+    gap:14px;
+    margin-top:10px;
+    font-size:0.78rem;
+    color:var(--muted);
+  }
+  .legend span{
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+  }
+  .swatch{
+    width:12px;height:3px;border-radius:2px;display:inline-block;
+  }
+
+  /* Matrix panel */
+  .matrix-wrap{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    margin:18px 0 8px;
+    font-family:"SFMono-Regular",Menlo,Consolas,monospace;
+  }
+  .bracket{
+    font-size:78px;
+    line-height:1;
+    color:#999;
+    font-weight:200;
+    user-select:none;
+  }
+  .matrix{
+    display:grid;
+    grid-template-columns:repeat(3, 78px);
+    grid-template-rows:repeat(3, 46px);
+    gap:4px;
+  }
+  .cell{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:0.95rem;
+    border-radius:6px;
+    background:#f3f3f3;
+    color:#444;
+    font-variant-numeric:tabular-nums;
+    position:relative;
+    transition:background 0.15s;
+  }
+  .cell.diag{ background:#eef2f7; color:#333; }
+  .cell.sin-pos{
+    background:#fff1e0;
+    color:var(--xp-color);
+    font-weight:700;
+    border:1.5px solid var(--xp-color);
+  }
+  .cell.sin-neg{
+    background:#e7f7f0;
+    color:var(--zp-color);
+    font-weight:700;
+    border:1.5px solid var(--zp-color);
+  }
+  .row-labels, .col-labels{
+    display:flex;
+    font-family:"SFMono-Regular",Menlo,Consolas,monospace;
+    font-size:0.72rem;
+    color:var(--muted);
+  }
+  .col-labels{
+    justify-content:center;
+    gap:4px;
+    margin-left:14px;
+    margin-bottom:2px;
+  }
+  .col-labels span{ width:78px; text-align:center; }
+  .row-side{
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    gap:4px;
+    margin-right:2px;
+  }
+  .row-side span{ height:46px; display:flex; align-items:center; }
+  .matrix-row-flex{ display:flex; align-items:center; }
+  .row-x-tag, .row-z-tag{
+    position:absolute;
+    left:-58px;
+    font-size:0.7rem;
+    font-weight:700;
+    letter-spacing:0.02em;
+  }
+  .row-x-tag{ color:var(--x-color); }
+  .row-z-tag{ color:var(--z-color); }
+  .matrix-outer{
+    position:relative;
+    padding-left:58px;
+  }
+  .cellnote{
+    font-size:0.72rem;
+    color:var(--muted);
+    text-align:center;
+    margin-top:14px;
+    line-height:1.5;
+  }
+  .cellnote b.pos{ color:var(--xp-color); }
+  .cellnote b.neg{ color:var(--zp-color); }
+
+  @media (max-width: 560px){
+    .matrix{ grid-template-columns:repeat(3, 62px); grid-template-rows:repeat(3, 40px);}
+    .col-labels span{ width:62px; }
+    .row-side span{ height:40px; }
+    .bracket{ font-size:60px; }
+  }
 </style>
 </head>
 <body>
-<h1>Rotating the $zx$-plane about $y$ by 90°</h1>
-<div class="sub">The 2D engine rotates a frame through the pair (first → second, second → −first).
-Only the <b>labeling</b> of which physical axis is "first" decides where the minus lands.</div>
 
-<div class="row">
-  <div>
-    <div class="panel-title">A · The geometric move (z is first, x is second)</div>
-    <canvas id="ca" width="620" height="440"></canvas>
-    <div class="legend">
-      <b>z&nbsp;→&nbsp;+x</b> and <b>x&nbsp;→&nbsp;−z</b>. The <span class="minus">−1</span> is literally
-      the "<b>second&nbsp;→&nbsp;−first</b>" move: x gets thrown to −z.
-    </div>
-  </div>
-  <div>
-    <div class="panel-title">B · Where that lands in the matrix (rows read x, y, z)</div>
-    <canvas id="cb" width="620" height="440"></canvas>
-    <div class="legend">
-      In the matrix, <b>x</b> is the top row and <b>z</b> is the bottom row. The plane's
-      "first" axis (z) therefore occupies the <b>bottom</b> row, so the
-      <span class="minus">−sin</span> shows up <b>bottom-left</b> (z-row, x-column).
-    </div>
-  </div>
+<h1>Why &minus;sin moves to bottom-left in R<sub>y</sub></h1>
+<p class="subtitle">Rotating about y rotates the <b>zx-plane</b> &mdash; but the matrix is indexed in (x, y, z) order.</p>
+
+<div class="controls">
+  <label for="angleSlider">Angle &phi;</label>
+  <input type="range" id="angleSlider" min="-180" max="180" value="35" step="1">
+  <div class="angle-readout" id="angleReadout">35&deg; &nbsp;(0.611 rad)</div>
 </div>
 
-<div class="eq fp">
-  R<sub>y</sub>(90°) = ⌈ 0&nbsp;0&nbsp;1 ⌉ &nbsp;&nbsp;&nbsp;col3 = image of z = (+1,0,0) ✓<br>
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| 0&nbsp;1&nbsp;0 |<br>
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;⌊ −1&nbsp;0&nbsp;0 ⌋ &nbsp;&nbsp;&nbsp;col1 = image of x = (0,0,−1) ✓
-</div>
+<div class="wrap">
 
-<div class="note">
-  <b>Why it's not arbitrary:</b> the 2D rotation always puts "−sin" at <i>first-row /
-  second-column</i> of its block. For R<sub>z</sub> the plane {x,y} matches the matrix
-  rows, so −sin is top-right. For R<sub>y</sub> the plane's first axis is <b>z</b>, but z
-  is the <b>bottom</b> matrix row — so −sin moves to <b>bottom-left</b>. The sign tracks
-  the axes; it is never picked by hand.
+  <div class="panel">
+    <h2>Left &mdash; the zx-plane</h2>
+    <p class="desc">Rotating about the y-axis spins the plane containing z and x. Drawn in its own natural order: <b>z first (vertical)</b>, <b>x second (horizontal)</b> &mdash; the same layout as the familiar 2D R = [[cos,&minus;sin],[sin,cos]] acting on (z,x).</p>
+    <canvas id="planeCanvas" width="460" height="380"></canvas>
+    <div class="legend">
+      <span><i class="swatch" style="background:var(--z-color)"></i>original +z</span>
+      <span><i class="swatch" style="background:var(--x-color)"></i>original +x</span>
+      <span><i class="swatch" style="background:var(--zp-color)"></i>rotated z&prime;</span>
+      <span><i class="swatch" style="background:var(--xp-color)"></i>rotated x&prime;</span>
+    </div>
+    <div class="caption">z rotates <i>toward</i> x. In the plane's own (z,x) frame that's the standard 2D rotation &mdash; nothing exotic happening geometrically.</div>
+  </div>
+
+  <div class="panel">
+    <h2>Right &mdash; same rotation as a matrix</h2>
+    <p class="desc">The matrix's rows/columns are forced into (x, y, z) order. That reorders the 2D block: the <b>x row is on top</b>, the <b>z row is on bottom</b> &mdash; opposite of the plane's natural (z,x) order on the left.</p>
+    <div class="matrix-wrap">
+      <div class="matrix-outer">
+        <div class="col-labels"><span>x</span><span>y</span><span>z</span></div>
+        <div style="display:flex; align-items:center;">
+          <div class="bracket">[</div>
+          <div class="matrix" id="matrixGrid">
+            <div class="cell diag" id="m00"></div>
+            <div class="cell" id="m01"></div>
+            <div class="cell sin-pos" id="m02"></div>
+            <div class="cell" id="m10"></div>
+            <div class="cell diag" id="m11"></div>
+            <div class="cell" id="m12"></div>
+            <div class="cell sin-neg" id="m20"></div>
+            <div class="cell" id="m21"></div>
+            <div class="cell diag" id="m22"></div>
+          </div>
+          <div class="bracket">]</div>
+        </div>
+        <span class="row-x-tag" style="top:14px;">x&nbsp;&rarr;</span>
+        <span class="row-z-tag" style="top:106px;">z&nbsp;&rarr;</span>
+      </div>
+    </div>
+    <div class="cellnote">
+      <b class="pos">top-right (x row, z col) = +sin</b> &mdash; x's rotated position picks up +sin&middot;z<br>
+      <b class="neg">bottom-left (z row, x col) = &minus;sin</b> &mdash; z's rotated position picks up &minus;sin&middot;x
+    </div>
+    <div class="caption">Same &minus;sin, same physical rotation &mdash; it only looks like it "moved" because the matrix lists x before z, while the plane naturally lists z before x.</div>
+  </div>
+
 </div>
 
 <script>
-"use strict";
-const OR = {x: 310, y: 220}; // canvas center
-const L  = 150;              // arrow length factor
-
-function setup(id){ const c = document.getElementById(id); const ctx=c.getContext('2d'); ctx.clearRect(0,0,c.width,c.height); return ctx; }
-
-function grid(ctx){
-  ctx.strokeStyle='#efefef'; ctx.lineWidth=1;
-  for(let i=-140;i<=140;i+=40){
-    ctx.beginPath(); ctx.moveTo(OR.x+i-140, OR.y-140); ctx.lineTo(OR.x+i-140, OR.y+140); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(OR.x-140, OR.y+i-140); ctx.lineTo(OR.x+140, OR.y+i-140); ctx.stroke();
-  }
-}
-function worldAxes(ctx){
-  ctx.strokeStyle='#bbb'; ctx.lineWidth=1.5; ctx.setLineDash([5,4]);
-  ctx.beginPath(); ctx.moveTo(OR.x-L,OR.y); ctx.lineTo(OR.x+L,OR.y); ctx.stroke();   // x
-  ctx.beginPath(); ctx.moveTo(OR.x,OR.y-L); ctx.lineTo(OR.x,OR.y+L); ctx.stroke();   // z
-  ctx.setLineDash([]);
-  ctx.fillStyle='#999'; ctx.font='italic 14px Georgia';
-  ctx.fillText('+x', OR.x+L+4, OR.y+16);
-  ctx.fillText('+z', OR.x-24, OR.y-L+4);
-}
-function arrow(ctx, v, color, width){
-  ctx.beginPath(); ctx.moveTo(OR.x,OR.y); ctx.lineTo(OR.x+v[0]*L, OR.y-v[1]*L);
-  ctx.strokeStyle=color; ctx.lineWidth=width; ctx.lineCap='round'; ctx.stroke();
-  const a=Math.atan2(-v[1],v[0]);
-  ctx.beginPath();
-  ctx.moveTo(OR.x+v[0]*L, OR.y-v[1]*L);
-  ctx.lineTo(OR.x+v[0]*L-11*Math.cos(a-0.42), OR.y-v[1]*L+11*Math.sin(a-0.42));
-  ctx.lineTo(OR.x+v[0]*L-11*Math.cos(a+0.42), OR.y-v[1]*L+11*Math.sin(a+0.42));
-  ctx.closePath(); ctx.fillStyle=color; ctx.fill();
-}
-function tag(ctx, v, txt, color, dx, dy){
-  ctx.font='bold 14px Georgia'; ctx.fillStyle=color;
-  ctx.fillText(txt, OR.x+v[0]*L+dx, OR.y-v[1]*L+dy);
-}
-
-/* Panel A: BEFORE (dashed, gray) and AFTER (solid) frame */
 (function(){
-  const ctx = setup('ca');
-  grid(ctx); worldAxes(ctx);
-  // Before: z points up, x points right  (the frame we start from)
-  arrow(ctx,[1,0], '#c0c0c0', 2); arrow(ctx,[0,1], '#c0c0c0', 2);
-  tag(ctx,[1,0], 'x (before)', '#999', 10, 18);
-  tag(ctx,[0,1], 'z (before)', '#999', 14, 2);
-  // After: z' → +x, x' → −z
-  arrow(ctx,[1,0], '#7d3cff', 4);
-  arrow(ctx,[0,-1], '#1e8449', 4);
-  tag(ctx,[1,0],  'z → +x', '#7d3cff', 12, -8);
-  tag(ctx,[0,-1], 'x → −z', '#1e8449', 12, 26);
-  ctx.font='italic 14px Georgia'; ctx.fillStyle='#c0392b';
-  ctx.fillText('second → −first  (the −1)', OR.x-L*0.5, OR.y+L*0.55);
-})();
+  const slider = document.getElementById('angleSlider');
+  const readout = document.getElementById('angleReadout');
+  const canvas = document.getElementById('planeCanvas');
+  const ctx = canvas.getContext('2d');
 
-/* Panel B: same move, but viewed through matrix row order (x top, z bottom) */
-(function(){
-  const ctx = setup('cb');
-  grid(ctx); worldAxes(ctx);
-  // Draw the two ROWS as horizontal bands is overkill; instead show z sitting on the bottom row.
-  // Before
-  arrow(ctx,[1,0], '#c0c0c0', 2); arrow(ctx,[0,1], '#c0c0c0', 2);
-  // After
-  arrow(ctx,[1,0], '#7d3cff', 4);   // image of z = +x  (this is column 3 → (1,0,0))
-  arrow(ctx,[0,-1], '#c0392b', 4);  // image of x = −z (this is column 1 → (0,0,−1)), painted red = the −
-  tag(ctx,[1,0],   'col3 = img of z = (+1,0,0)', '#7d3cff', -40, -10);
-  tag(ctx,[0,-1],  'col1 = img of x = (0,0,−1)', '#c0392b', 50, 26);
-  // Mini matrix on the right
-  ctx.font='bold 13px Georgia'; ctx.fillStyle='#222';
-  const mx=OR.x+L+20, my=OR.y+20; const cell=20;
-  const M=[[0,0,1],[0,1,0],[-1,0,0]];
-  for(let r=0;r<3;r++) for(let cci=0;cci<3;cci++){
-    const val=M[r][cci];
-    ctx.fillStyle = (val===1)?'#1e8449': (val===-1)?'#c0392b':'#ccc';
-    ctx.fillText(String(val), mx+cci*cell+4, my+r*cell+16);
+  const cellIds = {
+    m00:'m00', m01:'m01', m02:'m02',
+    m10:'m10', m11:'m11', m12:'m12',
+    m20:'m20', m21:'m21', m22:'m22'
+  };
+  const cells = {};
+  Object.keys(cellIds).forEach(id => cells[id] = document.getElementById(id));
+
+  function fmt(v){
+    if (Math.abs(v) < 1e-9) v = 0;
+    return v.toFixed(3);
   }
-  ctx.fillStyle='#999'; ctx.font='italic 13px Georgia';
-  ctx.fillText('R_y(90°)', mx, my-6);
-  // annotate bottom-left as the minus
-  ctx.strokeStyle='#c0392b'; ctx.lineWidth=1.5;
-  ctx.strokeRect(mx-2, my+2*cell-1, cell-2, cell-1);
-  ctx.fillStyle='#c0392b'; ctx.font='bold 11px Georgia';
-  ctx.fillText('the −', mx+cell+6, my+2*cell+13);
+
+  function render(){
+    const deg = parseFloat(slider.value);
+    const rad = deg * Math.PI / 180;
+    readout.innerHTML = deg.toFixed(0) + '&deg; &nbsp;(' + rad.toFixed(3) + ' rad)';
+
+    const c = Math.cos(rad), s = Math.sin(rad);
+
+    // R_y(phi) = [[cos,0,sin],[0,1,0],[-sin,0,cos]]  rows/cols in (x,y,z)
+    cells.m00.textContent = fmt(c);
+    cells.m01.textContent = fmt(0);
+    cells.m02.textContent = fmt(s);
+    cells.m10.textContent = fmt(0);
+    cells.m11.textContent = fmt(1);
+    cells.m12.textContent = fmt(0);
+    cells.m20.textContent = fmt(-s);
+    cells.m21.textContent = fmt(0);
+    cells.m22.textContent = fmt(c);
+
+    drawPlane(rad);
+  }
+
+  function drawPlane(rad){
+    const w = canvas.width, h = canvas.height;
+    ctx.clearRect(0,0,w,h);
+    ctx.save();
+    ctx.translate(w/2, h/2);
+
+    const scale = 120; // pixels per unit
+    const R = scale * 1.05;
+
+    // grid
+    ctx.strokeStyle = '#e3e3e3';
+    ctx.lineWidth = 1;
+    const gridExtent = 150;
+    for(let gx = -gridExtent; gx <= gridExtent; gx += 30){
+      ctx.beginPath();
+      ctx.moveTo(gx, -gridExtent);
+      ctx.lineTo(gx, gridExtent);
+      ctx.stroke();
+    }
+    for(let gy = -gridExtent; gy <= gridExtent; gy += 30){
+      ctx.beginPath();
+      ctx.moveTo(-gridExtent, gy);
+      ctx.lineTo(gridExtent, gy);
+      ctx.stroke();
+    }
+
+    // axes (black), horizontal = +x, vertical(up) = +z
+    ctx.strokeStyle = '#333';
+    ctx.lineWidth = 1.4;
+    ctx.beginPath();
+    ctx.moveTo(-gridExtent, 0); ctx.lineTo(gridExtent, 0);
+    ctx.moveTo(0, -gridExtent); ctx.lineTo(0, gridExtent);
+    ctx.stroke();
+
+    function arrow(x1,y1,x2,y2,color,lw,dashed,label,labelDx,labelDy){
+      ctx.save();
+      ctx.strokeStyle = color;
+      ctx.fillStyle = color;
+      ctx.lineWidth = lw;
+      if(dashed) ctx.setLineDash([6,5]); else ctx.setLineDash([]);
+      ctx.beginPath();
+      ctx.moveTo(x1,y1);
+      ctx.lineTo(x2,y2);
+      ctx.stroke();
+
+      if(!dashed){
+        const ang = Math.atan2(y2-y1, x2-x1);
+        const headLen = 11;
+        ctx.setLineDash([]);
+        ctx.beginPath();
+        ctx.moveTo(x2, y2);
+        ctx.lineTo(x2 - headLen*Math.cos(ang - Math.PI/7), y2 - headLen*Math.sin(ang - Math.PI/7));
+        ctx.lineTo(x2 - headLen*Math.cos(ang + Math.PI/7), y2 - headLen*Math.sin(ang + Math.PI/7));
+        ctx.closePath();
+        ctx.fill();
+      }
+
+      if(label){
+        ctx.font = '600 15px -apple-system, sans-serif';
+        ctx.fillText(label, x2 + labelDx, y2 + labelDy);
+      }
+      ctx.restore();
+    }
+
+    // canvas y is downward; screen "up" = -y, screen "right" = +x
+    // original +x axis
+    arrow(0,0, R,0, '#c0392b', 2.4, true, '+x', 10, 5);
+    // original +z axis (up)
+    arrow(0,0, 0,-R, '#2166ac', 2.4, true, '+z', 8, -8);
+
+    // rotated axes: z' rotates toward x by angle rad (standard 2D rotation on (z,x) with z up, x right)
+    // In (z,x) plane with z as "vertical/first" and x as "horizontal/second":
+    // z' = cos*z + sin*x  -> screen: (sin*R horizontal, -cos*R vertical)
+    // x' = -sin*z + cos*x -> screen: (cos*R horizontal, sin*R vertical)
+    const c = Math.cos(rad), s = Math.sin(rad);
+
+    const zpX = s * R, zpY = -c * R;
+    const xpX = c * R, xpY = s * R;
+
+    arrow(0,0, zpX, zpY, '#0b8f6b', 3, false, "z'", 10, zpY < 0 ? -8 : 14);
+    arrow(0,0, xpX, xpY, '#e07b00', 3, false, "x'", xpX >= 0 ? 12 : -18, 6);
+
+    // angle arc from original +z to rotated z'
+    ctx.save();
+    ctx.strokeStyle = '#555';
+    ctx.lineWidth = 1.3;
+    ctx.setLineDash([]);
+    const arcR = 46;
+    const startAng = -Math.PI/2; // pointing to +z (up)
+    const endAng = Math.atan2(zpY, zpX);
+    ctx.beginPath();
+    if (rad >= 0){
+      ctx.arc(0,0, arcR, startAng, endAng, false);
+    } else {
+      ctx.arc(0,0, arcR, endAng, startAng, false);
+    }
+    ctx.stroke();
+    ctx.restore();
+
+    // angle label
+    ctx.save();
+    ctx.fillStyle = '#333';
+    ctx.font = '600 13px -apple-system, sans-serif';
+    const midAng = (startAng + endAng)/2;
+    const labelR = arcR + 22;
+    ctx.fillText('\u03c6', Math.cos(midAng)*labelR - 4, Math.sin(midAng)*labelR + 4);
+    ctx.restore();
+
+    // origin dot
+    ctx.fillStyle = '#333';
+    ctx.beginPath();
+    ctx.arc(0,0,3,0,Math.PI*2);
+    ctx.fill();
+
+    ctx.restore();
+  }
+
+  slider.addEventListener('input', render);
+  render();
 })();
 </script>
+
 </body>
 </html>
