@@ -322,6 +322,16 @@ bigger. det ≠ 0 ⟺ invertible ⟺ unique solution.
 **Guardrails:** needs exactly n vectors in Rⁿ; fewer span only a subspace. Single
 2×2 determinant shortcut only works for square (n×n) systems.
 
+## Q: Are vector spaces discrete or continuous?
+Over ℝ (which is what we use): **continuous, forced by the axioms** — scalar closure
+means t·v is in the space for EVERY real t, so every line through the origin is a
+continuous line, and (1−t)v + tw fills the whole segment between any two vectors. No
+gaps, ever. A discrete grid like Z² is NOT a vector space over ℝ (½·(1,0) leaves the
+set) — it's a module/lattice. Genuinely discrete vector spaces exist only over finite
+fields (e.g. GF(2) = bits) — coding theory/crypto. Don't confuse discrete with
+infinite-dimensional: P (all polynomials) is infinite-dimensional but still
+continuous. Continuity ← scalar closure; dimension ← count of independent directions.
+
 ## Gram–Schmidt: subtract ALL the parallel parts, one axis at a time
 **The plan:** for each new vector, properly remove the parallel part of EVERY axis
 already built (u₁, u₂, ...), leaving a piece perpendicular to each, then normalize it.
