@@ -133,7 +133,10 @@ is always legal.
 
 **Where:** [`field.md`](field.md) (the build-it-up-from-a-set write-up),
 `lecture-1-confusions.md` (the 2-ops-vs-4-ops gotcha, verified by independent
-review).
+review). The companion [`vector-spaces.md`](vector-spaces.md) lists what the
+"vectors" can actually be (arrays, matrices, polynomials, functions, signals,
+images, sequences, ...) — tying straight back to the first-lecture polynomial/
+function discussions.
 
 ### The canonical reference
 
