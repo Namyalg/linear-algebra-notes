@@ -314,6 +314,120 @@ span / cover" — the extent of the space it reaches.
 - Not every vector in X grows the span: if a vector is already in the span, it's
   *redundant* — which is exactly the doorway into **linear independence** (next).
 
+## Topic: Basis + coefficients — the one-line result
+**n linearly independent vectors in Rⁿ ⟹ automatically a basis** (independence + full
+count leaves nothing missing). To find coefficients of any target w: set up the system
+w = A·coeffs and solve — Cramer's/determinants for small n, Gaussian elimination for
+bigger. det ≠ 0 ⟺ invertible ⟺ unique solution.
+**Guardrails:** needs exactly n vectors in Rⁿ; fewer span only a subspace. Single
+2×2 determinant shortcut only works for square (n×n) systems.
+
+## Gram–Schmidt: subtract ALL the parallel parts, one axis at a time
+**The plan:** for each new vector, properly remove the parallel part of EVERY axis
+already built (u₁, u₂, ...), leaving a piece perpendicular to each, then normalize it.
+wspecifically: w = v − proj_u₁(v) − proj_u₂(v) − ... (subtract parallel part of each
+axis already present, get something perp to every one of them), then u = w/‖w‖.
+
+**Trap — "sum of projections" vs "projection of the sum":**
+- SUM OF PROJECTIONS proj_u₁(v)+proj_u₂(v): keep axes separate, project onto each,
+  then add the peels. LEGAL only because u₁ ⟂ u₂ (no interference). ✓
+- PROJECTION OF THE SUM proj_(u₁+u₂)(v): merge axes into one slanted line, single
+  drop onto it. ✗ WRONG.
+- Why: u₁+u₂ = ONE line ⇒ "perp to the sum" = ONE constraint. But being orthogonal to
+  the covered set needs a constraint PER AXIS (u₁, u₂, ...) = TWO constraints. A single
+  slanted line enforces only one perpendicularity, leaving residue along all mixed axes.
+  The sum erases the 2→1 dimensionality.
+- The EXACT difference: proj_u₁(v)+proj_u₂(v) = proj_(u₁+u₂)(v) + proj_(u₁−u₂)(v).
+  Sum-of-projections = full v (both rotated pieces); projection-of-sum = only the
+  diagonal piece — it DROPS the anti-diagonal piece proj_(u₁−u₂)(v), which is the
+  whole difference. Equal only when v lies on the diagonal (perp component = 0).
+- Visual: `assets/projection-sum-vs-vector-sum.html`.
+- Gram–Schmidt overall: `assets/` (worked 2D example in confusions thread).
+
+**Gotcha — dot product is a SCALAR, always.** (1,2,1)·(1,1,0) = 1·1 + 2·1 + 1·0 =
+**3**, a single number — NOT (1,2,0). Component-wise product (keeping each slot
+separate) is a different operation; the dot product *sums* the matching products.
+In proj_a(v) = (v·a)/(a·a)·a, the scalar (v·a) then scales the WHOLE direction
+vector a. Slip's fingerprint: subtracting the wrong projection leaves a leftover
+that fails the orthogonality check (dot ≠ 0).
+
+**Worked 3D example** (v₁=(1,1,0), v₂=(1,0,1), v₃=(1,1,1)):
+```
+u₁ = (1/√2, 1/√2, 0)
+u₂ = (1/√6, −1/√6, 2/√6)
+u₃ = (−1/√3, 1/√3, 1/√3)
+```
+Step 3 does the double peel: proj_u₁(v₃)=(1,1,0), proj_u₂(v₃)=(1/3,−1/3,2/3),
+w₃ = v₃ − both = (−1/3,1/3,1/3), normalize → u₃.
+**Gotcha (trap in this example):** √(2/3) = 2/√6 is a *scalar* — it's v₃·u₂ (the
+projection coefficient) AND u₂'s third coordinate, but NOT part of u₃. u₃'s third
+component is 1/√3, same magnitude as the rest. Mistaking the projection scalar for a
+coordinate is the classic slip. (Flipping any uᵢ → −uᵢ is still valid.)
+
+**Worked 3D example #2** (v₁=(1,1,0), v₂=(1,0,1), v₃=(1,2,1)): same u₁, u₂; the
+double peel does real work: proj_u₁(v₃)=(3/2,3/2,0), proj_u₂(v₃)=(1/6,−1/6,1/3),
+w₃ = v₃ − both = (−2/3,2/3,2/3), u₃ = (−1/√3,1/√3,1/√3).
+**Both subtractions, always:** v₃ − proj_u₁ ONLY gives (5/6,13/6,2/3) — wrong, still
+has a u₁ component (and fails the dot-against-u₁ check). wₖ needs every projection
+subtracted.
+
+**In R³, u₃ is FORCED once u₁, u₂ are fixed:** u₃ = ±(u₁ × u₂). Any v₃ not lying in
+the u₁u₂-plane yields the same u₃ up to sign — so two different v₃'s giving the same
+u₃ is NOT an error.
+
+**The one-line understanding:** for each incoming xₖ, project it onto EVERY already-
+built u (i.e. compute each parallel part), subtract them ALL — the leftover is the
+perpendicular part, which becomes the next u after normalizing. Goal: all u's pairwise
+orthogonal and unit length = orthonormal basis of the same span.
+
+## Topic: Orthonormal vs non-orthogonal — why orthonormalize
+- **Basis ⟹ MUST be independent** (definition). Orthogonality is optional, an upgrade.
+- **Superposition happens in every basis** (w = Σaᵢvᵢ always). Orthogonality is NOT about
+  "fewer pieces" — it's about how *easy* the split is to find.
+- **Orthonormal ⟹ coefficient = projection** = one dot product (aᵢ = w·v̂ᵢ), read off
+  alone. Axes don't overlap.
+- **Non-orthogonal ⟹ coefficient ≠ projection** — axes overlap, coefficients entangled,
+  you must solve the system. (Proj of (3,5) onto (2,1) = 2.2, but TRUE coefficient = 1/3.)
+- Visual: `assets/basis-coordinates-visual.html`.
+- **What orthogonality kills is axis overlap**, not "n coefficients per vector."
+  Coordinates always number n per vector; the overlap is what entangles the solve.
+
+## Topic: Independence ⟹ unique solve ⟹ basis (the whole arc, one line)
+**The chain:** independence (n vectors in Rⁿ) ⟹ det ≠ 0 ⟹ system uniquely solvable for
+every target ⟹ spans all of Rⁿ ⟹ basis.
+
+- **Independence = the coefficient map is injective** (only all-zero scalars give 0).
+- **n independent vectors in Rⁿ = full count, no redundancy** → nothing can be missing
+  (no room for a target to hide) → spans everything.
+- **det is the computational face of the same fact**: nonzero det = legal division in
+  Cramer's rule (A⁻¹ = (1/det)·adjugate) = exactly one true answer.
+- **det = 0** ⟺ dependent ⟺ no unique solution (contradiction → none, or redundant →
+  infinitely many).
+- **Caveat:** the "automatic basis" needs the count = n. m < n independent vectors span
+  only an m-dim subspace, not all of Rⁿ.
+
+## Topic: Systems + Cramer's rule + matrices refresher
+**Setting up:** w = a₁v₁+...+aₙvₙ becomes n equations (one per coordinate), n unknowns.
+
+**Example:** a(1,2)+b(3,4)=(8,9) ⟹
+```
+a + 3b = 8
+2a + 4b = 9
+```
+Solve by elimination → a = −2.5, b = 3.5 (check: (−2.5,−5)+(10.5,14) = (8,9) ✓).
+
+**Why the formula = Cramer's rule:** A x = w, x = A⁻¹w, and A⁻¹ = (1/det)·adjugate — so
+det is the denominator. a = (w₁v₂ − w₂v₁)/(u₁v₂ − u₂v₁) = det(w,v)/det(u,v).
+
+**Matrix reading:** A maps the unit square to the parallelogram of its columns; det =
+its area-scaling factor. det = 0 ⟺ flattens plane to a line ⟺ not invertible ⟺ no
+unique solution. det ≠ 0 ⟺ invertible ⟺ unique solve ⟺ spans.
+
+**Higher dims:** concept is dimension-independent, but the one-scalar det test only
+works for a *square* basis (n vectors in Rⁿ). For other shapes use rank / the
+homogeneous test (Σcᵢvᵢ = 0 ⟹ all zero). For big n, replace hand substitution with
+Gaussian elimination (same idea, standardized, no arithmetic bookkeeping).
+
 ## Technique: the "drop the non-negative term" move
 **The template** (seen in Cauchy–Schwarz, the triangle inequality, and everywhere):
 write an exact identity, notice a term is ≥ 0, drop it, and get a ≥ bound.

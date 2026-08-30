@@ -97,6 +97,29 @@ vectors are free.
 **Where:** `assets/dot-product-axes.html` (the visualization), `lecture-1-confusions.md`
 (the settled thread).
 
+### 7. Span, basis, and Gram–Schmidt (Lecture 2)
+**Why it went deep:** independence kept sounding like an optional extra until I saw
+that it *is* the whole job — n independent vectors in Rⁿ are automatically a basis
+(no redundancy + full count = nothing missing), and the determinant is just the
+"division is legal" number in the solve. And orthonormalizing isn't about
+"representing with fewer pieces" (every basis splits a vector) — it's about making
+the coefficients *directly readable as projections* instead of solving a system.
+
+**The one-line results to carry into the problem set:**
+- independence ⟺ only trivial combo hits 0 ⟺ det ≠ 0 ⟺ unique solve ⟺ basis
+- Gram–Schmidt: normalize → subtract ALL projections → normalize; perpendicular by
+  construction, span preserved
+- orthonormal basis ⟹ coords = dot products; canonical basis = coords are the
+  entries themselves
+
+**Where:** the concept map now carries the full chain (mind-map branches + steps
+11–15 in `assets/concept-map.tex`), and the gotchas live in
+`lecture-1-confusions.md` (incl. the dot-product-is-a-scalar slip, sum-of-
+projections vs projection-of-the-sum, and the 3D Gram–Schmidt worked examples).
+Visuals: `assets/basis-coordinates-visual.html` (orthonormal vs non-orthogonal
+coordinates), `assets/projection-sum-vs-vector-sum.html` (why you can't project
+onto u₁+u₂).
+
 ### The canonical reference
 
 Everything in the norm / inner-product thread has a clean textbook home:
