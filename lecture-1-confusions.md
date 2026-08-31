@@ -95,6 +95,20 @@ length. In finite spaces they look the same; in P the basis {1, x, x², ...} nev
 family. A single function like sin(x) isn't "unrepresentable" — it just isn't a finite
 combination of powers of x.)
 
+## Topic: A vector is a function (finite vs countable vs uncountable)
+**The idea:** the vector [1, 2, 5, 3, 2, 6] can be interpreted as a function: just
+define f(k) = vₖ. The index k is the input and the output (the value of the function)
+is vₖ.
+
+This is exactly the idea that tells apart the three cases:
+- A finite vector [v₁, ..., vₙ] is a function on a **finite** domain k ∈ {1, ..., n}.
+- An infinite sequence (v₁, v₂, v₃, ...) is a function on the **countably infinite**
+  domain k ∈ ℕ.
+- A continuous function f : ℝ → ℝ (like sin x) has an **uncountably infinite** domain.
+
+**Takeaway:** every vector space we have met is really a space of functions — the
+vectors differ only in how large (and how "dense") their index set is.
+
 ---
 
 ## Topic: "Degrees of freedom" of a shape (S⁰, S¹, ...)
