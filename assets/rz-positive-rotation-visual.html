@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Positive rotation about +z: x→y, y→−x</title>
+<style>
+  body { margin:0; display:flex; flex-direction:column; align-items:center; background:#0f1117; color:#e6e8ee; font-family:ui-monospace,Menlo,monospace; }
+  h1 { font-size:16px; font-weight:600; margin:14px 0 2px; }
+  .sub { font-size:12px; color:#9aa3b2; margin-bottom:8px; }
+  canvas { background:#161a23; border:1px solid #2b3040; cursor:grab; touch-action:none; }
+  canvas:active { cursor:grabbing; }
+  .controls { display:flex; gap:10px; align-items:center; margin:10px 0; }
+  button { background:#2b3350; color:#e6e8ee; border:1px solid #3b4a6b; padding:6px 14px; border-radius:6px; cursor:pointer; font-size:13px; }
+  button:hover { background:#34406b; }
+  label { font-size:12px; color:#9aa3b2; }
+  input[type=range] { width:180px; }
+  .legend { font-size:12px; line-height:1.7; color:#c7cdd9; }
+  .swatch { display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:6px; }
+  .hint { font-size:11px; color:#6b7280; margin-top:4px; }
+</style>
+</head>
+<body>
+  <h1>Positive (CCW) rotation about <span style="color:#4f8cff">+z</span></h1>
+  <div class="sub">• white dots <span style="color:#ff7d7d">+x → +y</span> &nbsp;&bull;&nbsp; <span style="color:#7dffb0">+y → −x</span></div>
+  <canvas id="cv" width="720" height="560"></canvas>
+  <div class="controls">
+    <label>θ</label>
+    <input type="range" id="slider" min="0" max="90" step="1" value="0" />
+    <button id="play">▶ play</button>
+    <button id="zero">reset</button>
+  </div>
+  <div class="legend">
+    <div><span class="swatch" style="background:#f0646b"></span>x-axis</div>
+    <div><span class="swatch" style="background:#39d353"></span>y-axis</div>
+    <div><span class="swatch" style="background:#4f8cff"></span>z-axis (pivot — does not move)</div>
+    <div><span class="swatch" style="background:#ff7d7d"></span>path of +x (it swings into +y)</div>
+    <div><span class="swatch" style="background:#7dffb0"></span>path of +y (it swings into −x)</div>
+  </div>
+  <div class="hint">drag to orbit — viewed from +z looking down, this is counterclockwise.</div>
+
+<script>
+const cv = document.getElementById('cv');
+const ctx = cv.getContext('2d');
+const slider = document.getElementById('slider');
+const W = cv.width, H = cv.height;
+
+let yaw = 0.9, pitch = -0.28, dragStart = null;
+
+const AXES = [
+  { dir:[1,0,0], color:'#f0646b', label:'x' },
+  { dir:[0,1,0], color:'#39d353', label:'y' },
+  { dir:[0,0,1], color:'#4f8cff', label:'z' },
+];
+
+function project(p){
+  const cy=Math.cos(yaw), sy=Math.sin(yaw);
+  const cp=Math.cos(pitch), sp=Math.sin(pitch);
+  const rx=p[0]*cy + p[2]*sy;
+  const rz=-p[0]*sy + p[2]*cy;
+  const ry=p[1];
+  const X=rx, Y=ry*cp - rz*sp;
+  const s=180;
+  return [W/2 + X*s, H/2 - Y*s];
+}
+function drawLine(p1,p2,color,width=2){
+  const a=project(p1), b=project(p2);
+  ctx.strokeStyle=color; ctx.lineWidth=width; ctx.lineCap='round';
+  ctx.beginPath(); ctx.moveTo(a[0],a[1]); ctx.lineTo(b[0],b[1]); ctx.stroke();
+}
+function drawDot(p,color,r=7){
+  const q=project(p);
+  ctx.fillStyle=color; ctx.beginPath(); ctx.arc(q[0],q[1],r,0,Math.PI*2); ctx.fill();
+}
+function drawLabel(p,text,color){
+  const q=project([p[0]*1.25,p[1]*1.25,p[2]*1.25]);
+  ctx.fillStyle=color; ctx.font='700 15px monospace'; ctx.textAlign='center';
+  ctx.fillText(text,q[0],q[1]);
+}
+
+function draw(){
+  ctx.clearRect(0,0,W,H);
+  const R=0.92;
+  const th=(slider.value*Math.PI)/180;
+
+  // faint circle frame in xy-plane
+  ctx.save(); ctx.globalAlpha=0.15;
+  for (let a=0;a<=Math.PI*2;a+=0.05){
+    drawLine([Math.cos(a)*R,Math.sin(a)*R,0],[Math.cos(a+0.05)*R,Math.sin(a+0.05)*R,0],'#ffffff',1.5);
+  }
+  ctx.restore();
+
+  for (const ax of AXES){
+    drawLine([0,0,0],ax.dir,ax.color,2.5);
+    drawLabel(ax.dir,'+'+ax.label,ax.color);
+    if(ax.label==='x') drawLabel([-1*1.25,0,0],'−x','#7c8698');
+    if(ax.label==='y') drawLabel([0,-1*1.25,0],'−y','#7c8698');
+    if(ax.label==='z') drawLabel([0,0,-1*1.25],'−z','#7c8698');
+  }
+
+  // dots: A = x→y, B = y→−x
+  const a=[Math.cos(th)*R, Math.sin(th)*R, 0];   // +x → +y
+  const b=[-Math.sin(th)*R, Math.cos(th)*R, 0];  // +y → −x
+
+  ctx.save(); ctx.globalAlpha=0.5; ctx.lineWidth=3;
+  for(let t=0;t<th;t+=0.02){
+    drawLine([Math.cos(t)*R,Math.sin(t)*R,0],[Math.cos(t+0.02)*R,Math.sin(t+0.02)*R,0],'#ff7d7d',3);
+  }
+  for(let t=0;t<th;t+=0.02){
+    drawLine([-Math.sin(t)*R,Math.cos(t)*R,0],[-Math.sin(t+0.02)*R,Math.cos(t+0.02)*R,0],'#7dffb0',3);
+  }
+  ctx.restore();
+
+  drawDot(a,'#ff7d7d');
+  drawDot(b,'#7dffb0');
+  drawDot([0,0,0],'#ffffff',4);
+}
+
+slider.addEventListener('input',draw);
+
+cv.addEventListener('pointerdown',(e)=>{ dragStart={x:e.clientX,y:e.clientY}; cv.setPointerCapture(e.pointerId); });
+cv.addEventListener('pointermove',(e)=>{
+  if(!dragStart) return;
+  yaw+=(e.clientX-dragStart.x)*0.01;
+  pitch+=(e.clientY-dragStart.y)*0.01;
+  pitch=Math.max(-1.4,Math.min(1.4,pitch));
+  dragStart={x:e.clientX,y:e.clientY};
+  draw();
+});
+cv.addEventListener('pointerup',()=>dragStart=null);
+
+const playBtn=document.getElementById('play');
+let anim=null;
+playBtn.addEventListener('click',()=>{
+  if(anim){clearInterval(anim);anim=null;playBtn.textContent='▶ play';return;}
+  slider.value=0; draw();
+  playBtn.textContent='■ stop';
+  anim=setInterval(()=>{
+    const v=parseInt(slider.value);
+    if(v>=90){clearInterval(anim);anim=null;playBtn.textContent='▶ play';return;}
+    slider.value=v+1; draw();
+  },16);
+});
+document.getElementById('zero').addEventListener('click',()=>{
+  if(anim){clearInterval(anim);anim=null;playBtn.textContent='▶ play';}
+  slider.value=0; draw();
+});
+
+draw();
+</script>
+</body>
+</html>
